@@ -16,5 +16,9 @@ namespace Shopify.Controllers
         {
             return Ok("Hi");
         }
+        public ActionResult geet()
+        {
+            return Ok("Hi");
+        }
     }
 }
