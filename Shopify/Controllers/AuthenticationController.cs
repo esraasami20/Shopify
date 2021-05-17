@@ -21,7 +21,7 @@ namespace Shopify.Controllers
             return Ok("Hi");
         }
 
-        public ActionResult abcd()
+        public ActionResult abcdef()
         {
             return Ok("Hi");
         }
