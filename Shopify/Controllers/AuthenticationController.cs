@@ -20,5 +20,10 @@ namespace Shopify.Controllers
         {
             return Ok("Hi");
         }
+
+        public ActionResult abcd()
+        {
+            return Ok("Hi");
+        }
     }
 }
