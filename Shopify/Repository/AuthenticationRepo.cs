@@ -37,6 +37,29 @@ namespace Shopify.Repository
     }
 
 
+
+        public async Task<ResponseAuth> Login(LoginModel model)
+        {
+          var user =  await _userManager.FindByEmailAsync(model.Email);
+            if(user==null||!await _userManager.CheckPasswordAsync(user, model.password))
+            {
+                return new ResponseAuth { Message = "email or password not valid" };
+            }
+           
+            var token = await CreateJwtToken(user);
+            return new ResponseAuth
+            {
+                Email = user.Email,
+                UserName = user.Email,
+                Role = "Customer",
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                ExpireDate = token.ValidTo,
+                IsAuthenticated = true
+
+            };
+
+        }
+
         public async Task<ResponseAuth> RegisterCustomerAsync(RegisterModel model)
         {
            

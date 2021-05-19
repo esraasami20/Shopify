@@ -48,8 +48,7 @@ namespace Shopify
 
             });
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ShopifyContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShopifyContext>();
 
 
             services.Configure<JwtHelper>(Configuration.GetSection("JWT"));
@@ -95,7 +94,7 @@ namespace Shopify
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -104,8 +104,23 @@ namespace Shopify.Controllers
         // login
 
 
+        [HttpPost]
+        [Route("login")]
 
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _authentication.Login(model);
+                if (!result.IsAuthenticated)
+                {
+                    return BadRequest(result.Message);
+                }
+                return Ok(result);
+            }
+            return BadRequest(ModelState);
+        }
 
-
+     
     }
 }
