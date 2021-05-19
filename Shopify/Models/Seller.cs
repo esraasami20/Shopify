@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Shopify.Models
 {
-    public class Seller: ApplicationUser
+    public class Seller
     {
-       
 
-     
+        [Key, ForeignKey("ApplicationUser")]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string SellerId { get; set; }
+
         public virtual List<Inventory> Inventories { get; set; }
         public virtual List<Promotions> Promotions { get; set; }
 

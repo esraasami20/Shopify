@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 
 namespace Shopify.Helper
 {
-    public class first
+    public class Response
     {
+
+        public string Status { get; set; }
+        public string Message { get; set; }
     }
 }

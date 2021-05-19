@@ -40,5 +40,8 @@ namespace Shopify.Models
         [Range(18,100,ErrorMessage ="you should more the or equal 18")]
         public byte Age { get; set; }
 
+
+        
+
     }
 }

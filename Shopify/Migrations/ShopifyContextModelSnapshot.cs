@@ -303,7 +303,8 @@ namespace Shopify.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.HasIndex("ShippingDetailId");
+                    b.HasIndex("ShippingDetailId")
+                        .IsUnique();
 
                     b.HasIndex("StatusId");
 
@@ -362,6 +363,32 @@ namespace Shopify.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Shopify.Models.Customer", b =>
+                {
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CustomerId");
+
+                    b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("Shopify.Models.Employee", b =>
+                {
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<float>("Salary")
+                        .HasColumnType("real");
+
+                    b.Property<DateTime>("hireDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("EmployeeId");
+
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("Shopify.Models.Governorate", b =>
@@ -594,6 +621,16 @@ namespace Shopify.Migrations
                     b.ToTable("Reviews");
                 });
 
+            modelBuilder.Entity("Shopify.Models.Seller", b =>
+                {
+                    b.Property<string>("SellerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("SellerId");
+
+                    b.ToTable("Sellers");
+                });
+
             modelBuilder.Entity("Shopify.Models.ShippingDetail", b =>
                 {
                     b.Property<int>("ShippingDetailId")
@@ -686,33 +723,6 @@ namespace Shopify.Migrations
                     b.ToTable("Views");
                 });
 
-            modelBuilder.Entity("Shopify.Models.Customer", b =>
-                {
-                    b.HasBaseType("Shopify.Models.ApplicationUser");
-
-                    b.ToTable("Customers");
-                });
-
-            modelBuilder.Entity("Shopify.Models.Employee", b =>
-                {
-                    b.HasBaseType("Shopify.Models.ApplicationUser");
-
-                    b.Property<float>("Salary")
-                        .HasColumnType("real");
-
-                    b.Property<DateTime>("hireDate")
-                        .HasColumnType("datetime2");
-
-                    b.ToTable("Employees");
-                });
-
-            modelBuilder.Entity("Shopify.Models.Seller", b =>
-                {
-                    b.HasBaseType("Shopify.Models.ApplicationUser");
-
-                    b.ToTable("Sellers");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -767,7 +777,7 @@ namespace Shopify.Migrations
             modelBuilder.Entity("Shopify.Models.Cart", b =>
                 {
                     b.HasOne("Shopify.Models.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("Carts")
                         .HasForeignKey("CustomerID");
 
                     b.HasOne("Shopify.Models.Employee", "Employee")
@@ -775,8 +785,8 @@ namespace Shopify.Migrations
                         .HasForeignKey("EmployeeId");
 
                     b.HasOne("Shopify.Models.ShippingDetail", "ShippingDetail")
-                        .WithMany("Carts")
-                        .HasForeignKey("ShippingDetailId")
+                        .WithOne("Carts")
+                        .HasForeignKey("Shopify.Models.Cart", "ShippingDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -812,6 +822,28 @@ namespace Shopify.Migrations
                     b.Navigation("Cart");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Shopify.Models.Customer", b =>
+                {
+                    b.HasOne("Shopify.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("Shopify.Models.Employee", b =>
+                {
+                    b.HasOne("Shopify.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Shopify.Models.Inventory", b =>
@@ -968,33 +1000,6 @@ namespace Shopify.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Shopify.Models.Customer", b =>
-                {
-                    b.HasOne("Shopify.Models.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("Shopify.Models.Customer", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Shopify.Models.Employee", b =>
-                {
-                    b.HasOne("Shopify.Models.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("Shopify.Models.Employee", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Shopify.Models.Seller", b =>
-                {
-                    b.HasOne("Shopify.Models.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("Shopify.Models.Seller", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Shopify.Models.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -1008,6 +1013,15 @@ namespace Shopify.Migrations
             modelBuilder.Entity("Shopify.Models.Category", b =>
                 {
                     b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("Shopify.Models.Customer", b =>
+                {
+                    b.Navigation("Carts");
+
+                    b.Navigation("Reviews");
+
+                    b.Navigation("Views");
                 });
 
             modelBuilder.Entity("Shopify.Models.Governorate", b =>
@@ -1036,6 +1050,13 @@ namespace Shopify.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("Shopify.Models.Seller", b =>
+                {
+                    b.Navigation("Inventories");
+
+                    b.Navigation("Promotions");
+                });
+
             modelBuilder.Entity("Shopify.Models.ShippingDetail", b =>
                 {
                     b.Navigation("Carts");
@@ -1049,20 +1070,6 @@ namespace Shopify.Migrations
             modelBuilder.Entity("Shopify.Models.SubCategory", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Shopify.Models.Customer", b =>
-                {
-                    b.Navigation("Reviews");
-
-                    b.Navigation("Views");
-                });
-
-            modelBuilder.Entity("Shopify.Models.Seller", b =>
-                {
-                    b.Navigation("Inventories");
-
-                    b.Navigation("Promotions");
                 });
 #pragma warning restore 612, 618
         }
