@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Shopify.Helper;
@@ -13,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Shopify.Controllers
@@ -111,7 +113,7 @@ namespace Shopify.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _authentication.Login(model);
+                var result = await _authentication.LoginAsync(model);
                 if (!result.IsAuthenticated)
                 {
                     return BadRequest(result.Message);
@@ -130,23 +132,43 @@ namespace Shopify.Controllers
 
         public async Task<ActionResult> ForgetPassword([FromBody]ForgetPasswordModel model)
         {
-          var user=  await userManager.FindByEmailAsync(model.Email);
-            if (user == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest(new Response (){ Status="Error",Message="this email not valid" });
+                return BadRequest(ModelState);
             }
             else
             {
-                EmailHelper.SendEmail(model.Email  );
-                return Ok();
+              var result = await _authentication.ForgetPasswordAsync(model);
+                if (result.Status == "Success")
+                    return Ok();
+
+                return BadRequest(new Response { Status=result.Status,Message=result.Message});
+             
             }
         }
 
 
 
         // reset password
+        [HttpPost("reset-password")]
+
+        public async Task<ActionResult> ForgetPassword([FromBody] ResetPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                var result = await _authentication.ResetPasswordAsync(model);
+                if (result.Status == "Success")
+                    return Ok();
+
+                return BadRequest(new Response { Status = result.Status, Message = result.Message });
+
+            }
+        }
 
 
-     
     }
 }

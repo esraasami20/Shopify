@@ -48,7 +48,7 @@ namespace Shopify
 
             });
 
-            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShopifyContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShopifyContext>().AddDefaultTokenProviders();
 
 
             services.Configure<JwtHelper>(Configuration.GetSection("JWT"));

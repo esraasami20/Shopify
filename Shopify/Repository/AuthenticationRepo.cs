@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Shopify.Helper;
@@ -36,9 +37,9 @@ namespace Shopify.Repository
 
     }
 
+     
 
-
-        public async Task<ResponseAuth> Login(LoginModel model)
+        public async Task<ResponseAuth> LoginAsync(LoginModel model)
         {
           var user =  await _userManager.FindByEmailAsync(model.Email);
             if(user==null||!await _userManager.CheckPasswordAsync(user, model.password))
@@ -204,8 +205,46 @@ namespace Shopify.Repository
 
 
 
+        public async Task<Response> ForgetPasswordAsync(ForgetPasswordModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return new Response { Status = "Error", Message = "this email not valid" };
+            }
+            else
+            {
+                string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var encodeToken = Encoding.UTF8.GetBytes(token);
+                var validToken = WebEncoders.Base64UrlEncode(encodeToken);
 
 
+                EmailHelper.SendEmail(model.Email, validToken);
+                return  new Response {Status = "Success", Message = "this email not valid" }; 
+            }
+        }
+
+
+
+        public async Task<Response> ResetPasswordAsync(ResetPasswordModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return new Response { Status = "Error", Message = "this email not valid" };
+            }
+            else
+            {
+                var decodeToken = WebEncoders.Base64UrlDecode(model.Token);
+                var normalToken = Encoding.UTF8.GetString(decodeToken);
+
+
+                var result = await _userManager.ResetPasswordAsync(user, normalToken, model.Password);
+                if (result.Succeeded)
+                    return new Response { Status = "Success", Message = "this email not valid" };
+                return new Response { Status = "Error", Message = "invalid password"};
+            }
+        }
 
         private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
         {
