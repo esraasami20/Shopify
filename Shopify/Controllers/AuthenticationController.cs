@@ -121,6 +121,32 @@ namespace Shopify.Controllers
             return BadRequest(ModelState);
         }
 
+
+
+
+
+        // forget password
+        [HttpGet("forget-password")]
+
+        public async Task<ActionResult> ForgetPassword([FromBody]ForgetPasswordModel model)
+        {
+          var user=  await userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return BadRequest(new Response (){ Status="Error",Message="this email not valid" });
+            }
+            else
+            {
+                EmailHelper.SendEmail(model.Email  );
+                return Ok();
+            }
+        }
+
+
+
+        // reset password
+
+
      
     }
 }

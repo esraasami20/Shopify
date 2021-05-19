@@ -114,6 +114,17 @@ namespace Shopify.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Sellers",
+                columns: table => new
+                {
+                    SellerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sellers", x => x.SellerId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Statuses",
                 columns: table => new
                 {
@@ -236,53 +247,36 @@ namespace Shopify.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.Id);
+                    table.PrimaryKey("PK_Customers", x => x.CustomerId);
                     table.ForeignKey(
-                        name: "FK_Customers_AspNetUsers_Id",
-                        column: x => x.Id,
+                        name: "FK_Customers_AspNetUsers_CustomerId",
+                        column: x => x.CustomerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EmployeeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     hireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Salary = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.PrimaryKey("PK_Employees", x => x.EmployeeId);
                     table.ForeignKey(
-                        name: "FK_Employees_AspNetUsers_Id",
-                        column: x => x.Id,
+                        name: "FK_Employees_AspNetUsers_EmployeeId",
+                        column: x => x.EmployeeId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sellers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sellers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Sellers_AspNetUsers_Id",
-                        column: x => x.Id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -353,7 +347,7 @@ namespace Shopify.Migrations
                         name: "FK_Inventories_Sellers_sellerId",
                         column: x => x.sellerId,
                         principalTable: "Sellers",
-                        principalColumn: "Id",
+                        principalColumn: "SellerId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -375,7 +369,7 @@ namespace Shopify.Migrations
                         name: "FK_Promotions_Sellers_SellerId",
                         column: x => x.SellerId,
                         principalTable: "Sellers",
-                        principalColumn: "Id",
+                        principalColumn: "SellerId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -402,13 +396,13 @@ namespace Shopify.Migrations
                         name: "FK_Carts_Customers_CustomerID",
                         column: x => x.CustomerID,
                         principalTable: "Customers",
-                        principalColumn: "Id",
+                        principalColumn: "CustomerId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Carts_Employees_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
-                        principalColumn: "Id",
+                        principalColumn: "EmployeeId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Carts_ShippingDetails_ShippingDetailId",
@@ -573,7 +567,7 @@ namespace Shopify.Migrations
                         name: "FK_Reviews_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
+                        principalColumn: "CustomerId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reviews_Products_ProductId",
@@ -598,7 +592,7 @@ namespace Shopify.Migrations
                         name: "FK_Views_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
+                        principalColumn: "CustomerId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Views_Products_ProductId",
@@ -670,7 +664,8 @@ namespace Shopify.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_ShippingDetailId",
                 table: "Carts",
-                column: "ShippingDetailId");
+                column: "ShippingDetailId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_StatusId",
@@ -808,6 +803,9 @@ namespace Shopify.Migrations
                 name: "SubCategories");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "Governorates");
 
             migrationBuilder.DropTable(
@@ -818,9 +816,6 @@ namespace Shopify.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }
