@@ -6,6 +6,7 @@ using Shopify.Helper;
 using Shopify.Models;
 using Shopify.Repository.Interfaces;
 using Shopify.ViewModels;
+using Shopify.ViewModels.Facebook;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,6 +26,7 @@ namespace Shopify.Repository
         private EmployeeRepo _employeeRepo;
         private SellerRepo _sellerRepo;
         private  JwtHelper _jwt;
+       
 
         public AuthenticationRepo(UserManager<ApplicationUser> userManager, ManageRoles manageRoles, CustomerRepo customerRepo, EmployeeRepo employeeRepo, SellerRepo sellerRepo, IOptions<JwtHelper> jwt)
         {
@@ -34,6 +36,7 @@ namespace Shopify.Repository
             _sellerRepo = sellerRepo;
             _employeeRepo= employeeRepo;
             _jwt = jwt.Value;
+           
 
     }
 
@@ -245,6 +248,25 @@ namespace Shopify.Repository
                 return new Response { Status = "Error", Message = "invalid password"};
             }
         }
+
+
+
+
+
+        // login with facebook 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
         {

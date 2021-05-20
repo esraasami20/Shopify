@@ -50,6 +50,9 @@ namespace Shopify
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShopifyContext>().AddDefaultTokenProviders();
 
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
+                                                               Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
 
             services.Configure<JwtHelper>(Configuration.GetSection("JWT"));
 
@@ -80,6 +83,7 @@ namespace Shopify
             services.AddScoped<EmployeeRepo>();
             services.AddScoped<SellerRepo>();
             services.AddScoped<ManageRoles>();
+            services.AddScoped<CategoryRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
