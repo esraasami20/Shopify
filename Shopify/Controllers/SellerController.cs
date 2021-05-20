@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Shopify.Models;
 using Microsoft.AspNetCore.Identity;
+using Shopify.Repository;
 
 namespace Shopify.Controllers
 {
@@ -16,34 +17,26 @@ namespace Shopify.Controllers
     {
         private ShopifyContext _shopifyContext;
         private readonly UserManager<ApplicationUser> _applicationUser;
+        private readonly SellerRepo _sellerRepo;
 
-        public SellerController(ShopifyContext shopifyContext ,UserManager<ApplicationUser> applicationUser)
+        public SellerController(ShopifyContext shopifyContext ,UserManager<ApplicationUser> applicationUser,SellerRepo sellerRepo )
         {
             _shopifyContext = shopifyContext;
             _applicationUser = applicationUser;
+            _sellerRepo = sellerRepo;
         }
-        
+
         //get sellers data
-        [HttpGet("all-seller")]
-        public  List<ApplicationUser>  GetAlSellers()
+        [HttpGet]
+        public ActionResult<List<ApplicationUser>> GetAll()
         {
-            List<ApplicationUser> sellerData = new List<ApplicationUser>();
-            var sellerId = _shopifyContext.Sellers.Where(c => c.Isdeleted == false).ToList();
-
-            foreach (var item in sellerId)
-            {
-                var seller = _applicationUser.Users.FirstOrDefault(a => a.Id == item.SellerId);
-                
-                sellerData.Add(seller);
-            }
-            return  sellerData;
-
+            return _sellerRepo.GetAllSellers();
         }
         //get seller by id
         [HttpGet("{id}")]
         public async Task<ActionResult<Seller>> GetSellerById(string id)
         {
-            var seller = await _shopifyContext.Sellers.Include("ApplicationUser").FirstOrDefaultAsync(s=>s.SellerId==id);
+            var seller = await _shopifyContext.Sellers.Include( "ApplicationUser" ).FirstOrDefaultAsync(s=>s.SellerId==id);
             if (seller == null)
             {
                 return NotFound();
@@ -52,32 +45,21 @@ namespace Shopify.Controllers
         }
         //edit seller
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditSeller(string id,ApplicationUser seller)
+        public async Task<ActionResult<ApplicationUser>> EditSellerAsync(string id, [FromBody] ApplicationUser user)
         {
-            if (id != seller.Id)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            _shopifyContext.Entry(seller).State = EntityState.Modified;
-            //_shopifyContext.Users.Find(). = EntityState.Modified;
-
-            try
+            else
             {
-                await _shopifyContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (id != null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                user.Id = id;
+                var result = await _sellerRepo.PutSeller( id,  user);
+                if (result != null)
+                    return NoContent();
+                return NotFound();
             }
 
-            return NoContent();
         }
         // delete seller
         [HttpDelete("{id}")]
@@ -85,7 +67,6 @@ namespace Shopify.Controllers
         {
             ApplicationUser app = new ApplicationUser();
             var seller = await _shopifyContext.Sellers.FindAsync(id);
-            var seller1 = await _shopifyContext.Users.Where(a=>a.Id== id).Select(a=>a.);
             var sellerInUser = await _shopifyContext.Users.FindAsync(seller.SellerId);
             if (seller == null)
             {
@@ -93,17 +74,12 @@ namespace Shopify.Controllers
             }
             if(sellerInUser != null)
             {
-        
+                sellerInUser.AdminLocked = true;
                 seller.Isdeleted = true;
                 await _shopifyContext.SaveChangesAsync();
             }        
             return NoContent();
         }
-       
-
-        //private bool SellerExists(string id)
-        //{
-        //    return _shopifyContext.Sellers.Any(e => e.SellerId == id);
-        //}
+        
     }
 }

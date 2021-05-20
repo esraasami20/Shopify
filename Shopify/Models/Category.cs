@@ -16,7 +16,6 @@ namespace Shopify.Models
         [StringLength(100, MinimumLength = 3)]
         public string Name { get; set; }
         public string Image { get; set; }
-
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         [DefaultValue(false)]

@@ -23,7 +23,6 @@ namespace Shopify.Repository.Interfaces
             return _db.Categories.Where(c=>c.Isdeleted==false).ToList();
         }
 
-
         // get category by id
         public Category GetCategory(int id)
         {
@@ -70,10 +69,8 @@ namespace Shopify.Repository.Interfaces
                 
                 _db.SaveChanges();
             }
-            return categoryDetails;
-           
+            return categoryDetails;           
         }
-
 
         //  delete category
         public Category DeleteCategory(int id)
@@ -85,12 +82,6 @@ namespace Shopify.Repository.Interfaces
                
             }
             return category;
-
         }
-
-
-
-
-
     }
 }

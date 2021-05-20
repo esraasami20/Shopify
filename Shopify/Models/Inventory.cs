@@ -12,7 +12,6 @@ namespace Shopify.Models
     {
         public int InventoryId { get; set; }
         // citty street bu
-
         [Required]
         public string City { get; set; }
         public string Street { get; set; }

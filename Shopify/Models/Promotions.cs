@@ -10,16 +10,13 @@ namespace Shopify.Models
     public class Promotions
     {
 
-        public int PromotionsId { get; set; }
-      
+        public int PromotionsId { get; set; }     
 
         public float Discount { get; set; }
         public float Description { get; set; }
         public string Image { get; set; }
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
-
-
 
         [ForeignKey("Seller")]
         public string SellerId { get; set; }

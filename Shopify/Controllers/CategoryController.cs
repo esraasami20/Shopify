@@ -22,29 +22,21 @@ namespace Shopify.Controllers
         {
             _categoryRepo = categoryRepo;
         }
-
-
         // get all categories
         [HttpGet]
         public ActionResult<List<Category>> GetAll()
         {
             return _categoryRepo.GetAllCategories();
         }
-
-
-
         // get gategory by id
         [HttpGet("{id}")]
         public ActionResult<Category> GetCategory(int id)
         {
-                var result = _categoryRepo.GetCategory(id);
-                if (result == null)
-                    return NotFound();
-                return Ok(result);
+            var result = _categoryRepo.GetCategory(id);
+            if (result == null)
+                return NotFound();
+            return Ok(result);
         }
-
-
-
         // add category
         [HttpPost]
         public async Task<ActionResult<Category>> AddCategoryAsync([FromForm]Category category, [FromForm] IFormFile file)
