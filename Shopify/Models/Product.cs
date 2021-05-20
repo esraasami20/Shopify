@@ -47,6 +47,8 @@ namespace Shopify.Models
 
         [ForeignKey("Promotions")]
         public int PromotionId { get; set; }
+        [DefaultValue(false)]
+        public bool Isdeleted { get; set; }
         public Promotions Promotions { get; set; }
 
 

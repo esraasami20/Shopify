@@ -14,7 +14,8 @@ namespace Shopify.Models
         [Key, ForeignKey("ApplicationUser")]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string CustomerId { get; set; }
-
+        [DefaultValue(false)]
+        public bool Isdeleted { get; set; }
 
         public virtual ApplicationUser ApplicationUser { get; set; }
 

@@ -25,7 +25,8 @@ namespace Shopify.Models
         public string CustomerID { get; set; }
         public virtual Customer Customer { get; set; }
 
-
+        [DefaultValue(false)]
+        public bool Isdeleted { get; set; }
 
 
         [ForeignKey("Employee")]
