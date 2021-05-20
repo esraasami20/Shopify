@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shopify.Models;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,13 @@ namespace Shopify.Repository
         //get all inventories
         public List<Inventory> GetAllInventories()
         {
-            return _db.Inventories.Where(c => c.Isdeleted == false).ToList();
+            return _db.Inventories.Include("Seller").Where(c => c.Isdeleted == false).ToList();
         }
 
         // get inventory by id
         public Inventory GetInventoryById(int id)
         {
-            Inventory inventory = _db.Inventories.SingleOrDefault(c => c.InventoryId == id && c.Isdeleted == false);
+            Inventory inventory = _db.Inventories.Include("Seller").SingleOrDefault(c => c.InventoryId == id && c.Isdeleted == false);
             return inventory;
         }
         // add   inventory
@@ -38,10 +39,9 @@ namespace Shopify.Repository
         }
 
 
-        //  Edit Category
+        //  Edit inventory
         public async Task<Inventory> EditInventoryAsync(Inventory inventory, int id)
         {
-            //Inventory inventoryDetails = GetInventory(inventory.InventoryId);
             var inventoryDetails = await _db.Inventories.FindAsync(id);
             if (inventoryDetails != null)
             {
@@ -55,7 +55,7 @@ namespace Shopify.Repository
             return inventoryDetails;
         }
 
-        //  delete category
+        //  delete inventory
         public Inventory DeleteInventory(int id)
         {
             Inventory inventory = GetInventoryById(id);

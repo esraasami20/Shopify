@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Shopify.Models;
+using Shopify.Helper;
+using Shopify.Repository.Interfaces;
 
 namespace Shopify.Controllers
 {
@@ -12,36 +14,78 @@ namespace Shopify.Controllers
     [ApiController]
     public class PromotionController : ControllerBase
     {
-        private ShopifyContext _shopifyContext;
+        private PromotionRepo _promotionRepo;
 
-        public PromotionController(ShopifyContext shopifyContext)
+        public PromotionController(PromotionRepo promotionRepo)
         {
-            _shopifyContext = shopifyContext;
+            _promotionRepo = promotionRepo;
         }
         [HttpGet]
-        public List<Promotions> GetAllPromotions()
+        public ActionResult<List<Promotions>> GetAll()
         {
-            return _shopifyContext.Promotions.Where(c => c.Isdeleted == false).ToList();
+            return _promotionRepo.GetAllPromotions();
         }
+        //get promotion by id
         [HttpGet("{id}")]
-        public Promotions GetPromotionById(int id)
+        public ActionResult<Promotions> GetPromotion(int id)
         {
-            Promotions promotions = _shopifyContext.Promotions.SingleOrDefault(c => c.PromotionsId == id && c.Isdeleted == false);
-            return promotions;
+            var result = _promotionRepo.GetPromotion(id);
+            if (result == null)
+                return NotFound();
+            return Ok(result);
         }
-        //add promotions
-        //[HttpPost]
-        //public async Task<Promotions> AddCategory(Category category, IFormFile file)
-        //{
-        //    _db.Categories.Add(category);
-        //    _db.SaveChanges();
-        //    if (file != null)
-        //    {
-        //        string imagepath = await FileHelper.SaveImageAsync(category.CategoryId, file, "Categories");
-        //        category.Image = imagepath;
-        //        _db.SaveChanges();
-        //    }
-        //    return category;
-        //}
+        // add promotion
+        [HttpPost]
+        public async Task<ActionResult<Promotions>> AddCategoryAsync([FromForm] Promotions promotion, [FromForm] IFormFile file)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                Promotions result = await _promotionRepo.addPromotion(promotion, file);
+
+                return Ok(result);
+            }
+
+        }
+
+
+        //edit Promotions
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Promotions>> AddCategoryAsync(int id, [FromForm] Promotions promotion, [FromForm] IFormFile file)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                promotion.PromotionsId = id;
+                var result = await _promotionRepo.EditPromotionAsync(promotion, file);
+                if (result != null)
+                    return NoContent();
+                return NotFound();
+            }
+
+        }
+
+
+
+        // delete promotion
+        [HttpDelete("{id}")]
+        public ActionResult<Promotions> deletePromotion(int id)
+        {
+
+
+            var result = _promotionRepo.Deletepromotion(id);
+            if (result != null)
+                return NoContent();
+            return NotFound();
+        }
+
     }
 }
