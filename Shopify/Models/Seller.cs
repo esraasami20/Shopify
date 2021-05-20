@@ -16,6 +16,7 @@ namespace Shopify.Models
         public string SellerId { get; set; }
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
         public virtual List<Inventory> Inventories { get; set; }
         public virtual List<Promotions> Promotions { get; set; }
 
