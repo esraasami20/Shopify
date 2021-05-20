@@ -14,7 +14,7 @@ namespace Shopify.Controllers
     [ApiController]
     public class SellerController : ControllerBase
     {
-        private readonly ShopifyContext _shopifyContext;
+        private ShopifyContext _shopifyContext;
         private readonly UserManager<ApplicationUser> _applicationUser;
 
         public SellerController(ShopifyContext shopifyContext ,UserManager<ApplicationUser> applicationUser)
@@ -25,26 +25,85 @@ namespace Shopify.Controllers
         
         //get sellers data
         [HttpGet("all-seller")]
-        public async Task<ActionResult<IEnumerable<Seller>>> GetAlSellers()
+        public  List<ApplicationUser>  GetAlSellers()
         {
-            var sellerId = _applicationUser.Users.FirstOrDefault().Id;
-            return await _shopifyContext.Sellers.Where(w=>w.SellerId == sellerId).ToListAsync();          
+            List<ApplicationUser> sellerData = new List<ApplicationUser>();
+            var sellerId = _shopifyContext.Sellers.ToList();
+            foreach (var item in sellerId)
+            {
+                var seller = _applicationUser.Users.FirstOrDefault(a => a.Id == item.SellerId);
+                
+                sellerData.Add(seller);
+            }
+            return  sellerData;
 
         }
         //get seller by id
         [HttpGet("{id}")]
         public async Task<ActionResult<Seller>> GetSellerById(string id)
         {
-
-            var ID = await _shopifyContext.Sellers.FindAsync(id);
-
-            if (ID == null)
+            var seller = await _shopifyContext.Sellers.Include("ApplicationUser").FirstOrDefaultAsync(s=>s.SellerId==id);
+            if (seller == null)
             {
                 return NotFound();
             }
-
-            return ID;
+            return seller;
         }
+        //edit seller
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditSeller(string id,ApplicationUser seller)
+        {
+            if (id != seller.Id)
+            {
+                return BadRequest();
+            }
+            _shopifyContext.Entry(seller).State = EntityState.Modified;
+            //_shopifyContext.Users.Find(). = EntityState.Modified;
 
+            try
+            {
+                await _shopifyContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (id != null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+        // delete seller
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSeeler(string id)
+        {
+            var seller = await _shopifyContext.Sellers.FindAsync(id);
+            var sellerInUser = await _shopifyContext.Users.FindAsync(seller.SellerId);
+            if (seller == null)
+            {
+                return NotFound();
+            }
+            var removeSeller = _shopifyContext.Sellers.Where(a=>a.SellerId == id).Select(a=>a.Isdeleted);
+            //if(removeSeller = false)
+            //{
+
+            //}
+            _shopifyContext.Sellers.Remove(seller);
+            _shopifyContext.Users.Remove(sellerInUser);
+            await _shopifyContext.SaveChangesAsync();
+
+            return NoContent();
+        }
+       
+
+        //private bool SellerExists(string id)
+        //{
+        //    return _shopifyContext.Sellers.Any(e => e.SellerId == id);
+        //}
     }
 }
