@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Shopify.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -56,7 +56,7 @@ namespace Shopify.Controllers
         }
 
 
-        // add category
+        //edit category
         [HttpPut("{id}")]
         public async Task<ActionResult<Category>> AddCategoryAsync(int id,[FromForm] Category category, [FromForm] IFormFile file)
         {

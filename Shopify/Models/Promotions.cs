@@ -20,7 +20,7 @@ namespace Shopify.Models
 
         [ForeignKey("Seller")]
         public string SellerId { get; set; }
-        public Seller Seller { get; set; }
+        public virtual Seller Seller { get; set; }
 
         public virtual List<Product> Products { get; set; }
 
