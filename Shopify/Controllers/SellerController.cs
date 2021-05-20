@@ -28,7 +28,8 @@ namespace Shopify.Controllers
         public  List<ApplicationUser>  GetAlSellers()
         {
             List<ApplicationUser> sellerData = new List<ApplicationUser>();
-            var sellerId = _shopifyContext.Sellers.ToList();
+            var sellerId = _shopifyContext.Sellers.Where(c => c.Isdeleted == false).ToList();
+
             foreach (var item in sellerId)
             {
                 var seller = _applicationUser.Users.FirstOrDefault(a => a.Id == item.SellerId);
@@ -80,23 +81,22 @@ namespace Shopify.Controllers
         }
         // delete seller
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSeeler(string id)
+        public async Task<IActionResult> DeleteSeller(string id)
         {
+            ApplicationUser app = new ApplicationUser();
             var seller = await _shopifyContext.Sellers.FindAsync(id);
+            var seller1 = await _shopifyContext.Users.Where(a=>a.Id== id).Select(a=>a.);
             var sellerInUser = await _shopifyContext.Users.FindAsync(seller.SellerId);
             if (seller == null)
             {
                 return NotFound();
             }
-            var removeSeller = _shopifyContext.Sellers.Where(a=>a.SellerId == id).Select(a=>a.Isdeleted);
-            //if(removeSeller = false)
-            //{
-
-            //}
-            _shopifyContext.Sellers.Remove(seller);
-            _shopifyContext.Users.Remove(sellerInUser);
-            await _shopifyContext.SaveChangesAsync();
-
+            if(sellerInUser != null)
+            {
+        
+                seller.Isdeleted = true;
+                await _shopifyContext.SaveChangesAsync();
+            }        
             return NoContent();
         }
        
