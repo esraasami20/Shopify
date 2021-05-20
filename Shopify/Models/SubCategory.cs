@@ -29,6 +29,7 @@ namespace Shopify.Models
 
         public virtual Category Category { get; set; }
         public virtual List<Product> Products { get; set; }
-
+        public virtual List<Brand> Brands { get; set; }
+        
     }
 }

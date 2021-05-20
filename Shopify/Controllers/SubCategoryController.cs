@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Shopify.Helper;
 using Shopify.Models;
 using Shopify.Repository;
+using Shopify.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,6 +93,19 @@ namespace Shopify.Controllers
 
 
 
+        // add brand to sub category
+        [HttpPost("add-to-Brand")]
+        public ActionResult<Response> AddBrandToSubCategory([FromBody] BrandSubCatViewModel model)
+        {
+            if (model.BrandId==0&&model.SubCatId==0)
+            {
+                return BadRequest();
+            }
+            var result = _subCategoryRepo.AddBrandToSubCategory(model.BrandId,model.SubCatId);
+            if (result.Status=="Error")
+                return NotFound(result);
+            return Ok(result);
+        }
 
 
     }

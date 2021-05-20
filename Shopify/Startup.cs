@@ -86,6 +86,7 @@ namespace Shopify
             services.AddScoped<ManageRoles>();
             services.AddScoped<CategoryRepo>();
             services.AddScoped<SubCategoryRepo>();
+            services.AddScoped<BrandRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

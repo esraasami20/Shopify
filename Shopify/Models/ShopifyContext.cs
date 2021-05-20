@@ -51,6 +51,21 @@ namespace Shopify.Models
             builder.Entity<InventoryProduct>().HasKey(IP => new { IP.InventoryId,IP.ProductId });
 
 
+
+            builder.Entity<Category>()
+           .Property(b => b.CreatedAt)
+           .HasDefaultValueSql("getdate()");
+
+            builder.Entity<SubCategory>()
+          .Property(b => b.CreatedAt)
+          .HasDefaultValueSql("getdate()");
+
+
+            builder.Entity<Brand>()
+          .Property(b => b.CreatedAt)
+          .HasDefaultValueSql("getdate()");
+
+
         }
 
         public ShopifyContext(DbContextOptions options) : base(options)

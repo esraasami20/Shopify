@@ -95,7 +95,26 @@ namespace Shopify.Repository
 
         }
 
+         
 
+        // assign brand to sub category
+        public Response AddBrandToSubCategory(int brandId , int subCategoryId)
+        {
+            SubCategory subCategory = _db.SubCategories.Where(c => c.SubCategoryId == subCategoryId && c.Isdeleted == false).FirstOrDefault();
+            Brand brand  = _db.Brands.Where(c => c.BrandId == brandId && c.Isdeleted == false).FirstOrDefault();
+            var isExist = _db.SubCategories.Include("Brands").Where(r => r.SubCategoryId == subCategoryId).FirstOrDefault().Brands.Where(rr => rr.BrandId == brandId).FirstOrDefault();
+
+            if (subCategory == null)
+                return new Response { Status = "Error", Message = "category  not found" };
+            if (brand == null)
+                return new Response { Status = "Error", Message = "brand  not found" };
+            if(isExist!=null)
+                return new Response { Status = "Error", Message = "relation is existed already" };
+            _db.SubCategories.Include("Brands").Where(r => r.SubCategoryId == subCategoryId).FirstOrDefault().Brands.Add(_db.Brands.FirstOrDefault(rr => rr.BrandId == brandId));
+            _db.SaveChanges();
+            return   new Response { Status = "Success", Message = "Added Successfully" };
+
+        }
 
 
     }
