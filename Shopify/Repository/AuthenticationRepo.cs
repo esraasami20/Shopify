@@ -51,11 +51,12 @@ namespace Shopify.Repository
             }
            
             var token = await CreateJwtToken(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
             return new ResponseAuth
             {
                 Email = user.Email,
                 UserName = user.Email,
-                Role = "Customer",
+                Role =userRoles[0],
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 ExpireDate = token.ValidTo,
                 IsAuthenticated = true
@@ -208,6 +209,51 @@ namespace Shopify.Repository
 
 
 
+        public async Task<ResponseAuth> RegisterAdminAsync(RegisterModel model)
+        {
+            if (await _userManager.FindByEmailAsync(model.Email) != null)
+                return new ResponseAuth { Message = "Email is already Exist" };
+
+            if (await _userManager.FindByNameAsync(model.Username) != null)
+                return new ResponseAuth { Message = "Username is already Exist" };
+
+            ApplicationUser user = new ApplicationUser()
+            {
+                Fname = model.Fname,
+                Lname = model.Lname,
+                Address = model.Address,
+                Email = model.Email,
+                UserName = model.Username,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+            {
+                var errors = "";
+                foreach (var error in result.Errors)
+                {
+                    errors += $"{error.Description}";
+                }
+                return new ResponseAuth { Message = errors };
+
+            }
+
+            await _manageRoles.AddToSAdminRole(user);
+            var token = await CreateJwtToken(user);
+            return new ResponseAuth
+            {
+                Email = user.Email,
+                UserName = user.Email,
+                Role = "Admin",
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                ExpireDate = token.ValidTo,
+                IsAuthenticated = true
+
+            };
+        }
+
+
         public async Task<Response> ForgetPasswordAsync(ForgetPasswordModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -253,7 +299,7 @@ namespace Shopify.Repository
 
 
 
-        // login with facebook 
+  
 
 
 
@@ -300,5 +346,6 @@ namespace Shopify.Repository
             return jwtSecurityToken;
         }
 
+       
     }
 }

@@ -21,18 +21,18 @@ namespace Shopify.Helper
 
 
 
-        // add to customer role
+        // add to customer 
 
        public async Task<bool> AddToCustomerRole(ApplicationUser user)
         {
             try
             {
-                if (!await roleManager.RoleExistsAsync("User"))
-                    await roleManager.CreateAsync(new IdentityRole("User"));
+                if (!await roleManager.RoleExistsAsync("Customer"))
+                    await roleManager.CreateAsync(new IdentityRole("Customer"));
 
-                if (await roleManager.RoleExistsAsync("User"))
+                if (await roleManager.RoleExistsAsync("Customer"))
                 {
-                    await userManager.AddToRoleAsync(user, "User");
+                    await userManager.AddToRoleAsync(user, "Customer");
 
                 }
                 return true;
@@ -45,7 +45,7 @@ namespace Shopify.Helper
         }
 
 
-        // add to customer employee
+        // add to  employee
 
         public async Task<bool> AddToEmployeeRole(ApplicationUser user)
         {
@@ -71,7 +71,7 @@ namespace Shopify.Helper
 
 
 
-        // add to customer seller
+        // add to  seller
 
         public async Task<bool> AddToSellerRole(ApplicationUser user)
         {
@@ -83,6 +83,31 @@ namespace Shopify.Helper
                 if (await roleManager.RoleExistsAsync("Seller"))
                 {
                     await userManager.AddToRoleAsync(user, "Seller");
+
+                }
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+
+
+        // add to  admin
+
+        public async Task<bool> AddToSAdminRole(ApplicationUser user)
+        {
+            try
+            {
+                if (!await roleManager.RoleExistsAsync("Admin"))
+                    await roleManager.CreateAsync(new IdentityRole("Admin"));
+
+                if (await roleManager.RoleExistsAsync("Admin"))
+                {
+                    await userManager.AddToRoleAsync(user, "Admin");
 
                 }
                 return true;

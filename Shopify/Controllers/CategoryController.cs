@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shopify.Models;
 using Shopify.Repository.Interfaces;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Shopify.Controllers
 {
+    [Authorize(Roles ="Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase

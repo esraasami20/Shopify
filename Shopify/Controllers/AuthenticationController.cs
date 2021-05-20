@@ -103,6 +103,25 @@ namespace Shopify.Controllers
         }
 
 
+
+        [HttpPost]
+        [Route("register-admin")]
+
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _authentication.RegisterAdminAsync(model);
+                if (!result.IsAuthenticated)
+                {
+                    return BadRequest(result.Message);
+                }
+                return Ok(result);
+            }
+            return BadRequest(ModelState);
+        }
+
+
         // login
 
 
