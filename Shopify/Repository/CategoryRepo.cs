@@ -32,6 +32,10 @@ namespace Shopify.Repository.Interfaces
         }
 
 
+
+
+
+
         // add   category
         public async Task<Category> AddCategory(Category category, IFormFile file)
         {

@@ -22,7 +22,7 @@ namespace Shopify.Models
         public string sellerId { get; set; }
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
-        public Seller Seller { get; set; }
+        public virtual Seller Seller { get; set; }
 
 
     }

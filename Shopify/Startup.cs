@@ -44,12 +44,13 @@ namespace Shopify
 
             services.AddDbContext<ShopifyContext>(op =>
             {
-                op.UseSqlServer(Configuration.GetConnectionString("myconnection"));
+                op.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("myconnection"));
 
             });
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShopifyContext>().AddDefaultTokenProviders();
 
+           
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
                                                                Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
@@ -84,6 +85,7 @@ namespace Shopify
             services.AddScoped<SellerRepo>();
             services.AddScoped<ManageRoles>();
             services.AddScoped<CategoryRepo>();
+            services.AddScoped<SubCategoryRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
