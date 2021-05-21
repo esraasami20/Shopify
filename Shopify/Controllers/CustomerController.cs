@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 using Shopify.Repository.Interfaces;
 using Shopify.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Principal;
+using Shopify.Helper;
 
 namespace Shopify.Controllers
 {
@@ -62,7 +66,7 @@ namespace Shopify.Controllers
             }
 
         }
-        // delete seller
+        // delete customer
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomer(string id)
         {
@@ -81,5 +85,9 @@ namespace Shopify.Controllers
             }
             return NoContent();
         }
+
+
+
+
     }
 }

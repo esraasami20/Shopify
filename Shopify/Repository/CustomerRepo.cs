@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Shopify.Helper;
 using Shopify.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace Shopify.Repository
@@ -52,6 +55,12 @@ namespace Shopify.Repository
             await _db.SaveChangesAsync();
             return userCustomer;
         }
+
+
+
+
+        
+
 
     }
 }
