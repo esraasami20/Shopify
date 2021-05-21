@@ -108,5 +108,56 @@ namespace Shopify.Controllers
         }
 
 
+
+        // get all colors for specific sub-category
+
+        [HttpGet("colors/{id}")]
+        public ActionResult<List<string>> GetColors(int id)
+        {
+           var result = _subCategoryRepo.GetAllColorsForSubCategory(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result); 
+
+        }
+
+
+
+
+        // get all size for specific sub-category
+
+        [HttpGet("sizes/{id}")]
+        public ActionResult<List<string>> GetSizes(int id)
+        {
+            var result = _subCategoryRepo.GetAllSizesForSubCategory(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+
+        }
+
+
+
+
+
+        // get all size for specific sub-category
+
+        [HttpGet("range-money/{id}")]
+        public ActionResult<List<string>> GetRangeMoney(int id)
+        {
+            var result = _subCategoryRepo.GetRangeModenyForSubCategory(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+
+        }
+
+
     }
 }

@@ -117,5 +117,42 @@ namespace Shopify.Repository
         }
 
 
+        // get range money
+        public List<float> GetRangeModenyForSubCategory(int id)
+        {
+            List<float> range = new List<float>();
+            SubCategory subCategory = GetSubCategory(id);
+            if (subCategory != null)
+            {
+                range.Add(subCategory.Products.Where(p => p.SubCategotyId == id).Select(c => c.Price).Min());
+                 range.Add(subCategory.Products.Where(p => p.SubCategotyId == id).Select(c => c.Price).Max());
+            }
+            return range;
+        }
+
+        // get colors
+        public List<string> GetAllColorsForSubCategory(int id)
+        {
+            SubCategory subCategory = GetSubCategory(id);
+            if (subCategory != null)
+            {
+                return subCategory.Products.Where(p => p.SubCategotyId == id).Select(c => c.Color).ToList();
+
+            }
+            return null;
+        }
+
+
+        // get sizes
+        public List<string> GetAllSizesForSubCategory(int id)
+        {
+            SubCategory subCategory = GetSubCategory(id);
+            if (subCategory != null)
+            {
+                return subCategory.Products.Where(p => p.SubCategotyId == id).Select(c=>c.Size).ToList();
+                
+            }
+            return null;
+        }
     }
 }
