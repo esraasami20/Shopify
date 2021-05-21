@@ -91,6 +91,7 @@ namespace Shopify
             services.AddScoped<BrandRepo>();
             services.AddScoped<InventoryRepo>();
             services.AddScoped<PromotionRepo>();
+            services.AddScoped<ProductRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
