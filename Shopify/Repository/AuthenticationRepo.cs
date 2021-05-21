@@ -6,7 +6,6 @@ using Shopify.Helper;
 using Shopify.Models;
 using Shopify.Repository.Interfaces;
 using Shopify.ViewModels;
-using Shopify.ViewModels.Facebook;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
