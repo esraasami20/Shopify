@@ -21,7 +21,7 @@ namespace Shopify.Controllers
         }
 
 
-        // get brands for sub category
+        // get brands for product
         [HttpGet("pro/{id}")]
         public ActionResult<List<Product>> GetAllproductsBrand(int id)
         {
@@ -33,7 +33,7 @@ namespace Shopify.Controllers
 
 
 
-        // get brand by id
+        // get product by id
         [HttpGet("{id}")]
         public ActionResult<Product> GetProduct(int id)
         {
@@ -64,7 +64,7 @@ namespace Shopify.Controllers
         }
 
 
-        //edit brand
+        //edit product
         [HttpPut("{id}")]
         public ActionResult EditProduct(int id, [FromBody] Product product)
         {
@@ -86,7 +86,7 @@ namespace Shopify.Controllers
 
 
 
-        // delete category
+        // delete product
         [HttpDelete("{id}")]
         public ActionResult deleteProduct(int id)
         {

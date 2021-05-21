@@ -23,7 +23,7 @@ namespace Shopify.Models
 
         [ForeignKey("Customer")]
         public string CustomerID { get; set; }
-        public virtual Customer Customer { get; set; }
+         public virtual Customer Customer { get; set; }
 
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
@@ -37,12 +37,12 @@ namespace Shopify.Models
 
 
         [ForeignKey("Status")]
-        public int StatusId { get; set; }
+        public int? StatusId { get; set; }
         public virtual Status Status { get; set; }
 
 
         [ForeignKey("ShippingDetail")]
-        public int ShippingDetailId { get; set; }
+        public int? ShippingDetailId { get; set; }
         public virtual ShippingDetail ShippingDetail { get; set; }
 
 

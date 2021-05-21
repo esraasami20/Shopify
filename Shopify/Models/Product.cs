@@ -37,11 +37,11 @@ namespace Shopify.Models
         public virtual List<ProductDetail> ProductDetails { get; set; }
 
         [ForeignKey("Brand")]
-        public int BrandId { get; set; }
+        public int ?BrandId { get; set; }
         public virtual Brand Brand { get; set; }
 
         [ForeignKey("subCategory")]
-        public int SubCategotyId { get; set; }
+        public int ?SubCategotyId { get; set; }
         public virtual SubCategory subCategory { get; set; }
 
 
@@ -51,8 +51,6 @@ namespace Shopify.Models
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
         public virtual Promotions Promotions { get; set; }
-
-
         public virtual List<Review> Reviews { get; set; }
         public virtual List<View> Views { get; set; }
        

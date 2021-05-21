@@ -17,11 +17,11 @@ namespace Shopify.Models
         public float TotalPrice { get; set; }
 
         [ForeignKey("Product")]
-        public int ProductId { get; set; }
+        public int ?ProductId { get; set; }
         public virtual Product Product { get; set; }
 
         [ForeignKey("Cart")]
-        public int CartId { get; set; }
+        public int ?CartId { get; set; }
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
         public virtual Cart Cart { get; set; }
