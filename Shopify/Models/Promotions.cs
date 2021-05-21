@@ -13,7 +13,7 @@ namespace Shopify.Models
         public int PromotionsId { get; set; }     
 
         public float Discount { get; set; }
-        public float Description { get; set; }
+        public string Description { get; set; }
         public string Image { get; set; }
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
