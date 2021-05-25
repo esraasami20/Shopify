@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shopify.Models;
+using Shopify.Repository;
 using Shopify.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,24 +15,24 @@ namespace Shopify.Controllers
     public class ProductController : ControllerBase
     {
         ProductRepo _productRepo;
+        ShopifyContext _shopifyContext;
 
-        public ProductController(ProductRepo productRepo)
+        public ProductController(ProductRepo productRepo,ShopifyContext shopifyContext)
         {
             _productRepo = productRepo;
+            _shopifyContext = shopifyContext;
         }
-
-
-        // get brands for product
-        [HttpGet("pro/{id}")]
-        public ActionResult<List<Product>> GetAllproductsBrand(int id)
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
-            var result = _productRepo.getBrandsForProduct(id);
-            if (result == null)
-                return NotFound();
-            return Ok(result);
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var pagedData =  _shopifyContext.Products
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToList();
+            var totalRecords =  _shopifyContext.Products.Count();
+            return Ok(new PagedPagination<List<Product>>(pagedData, validFilter.PageNumber, validFilter.PageSize));
         }
-
-
 
         // get product by id
         [HttpGet("{id}")]
@@ -42,9 +43,6 @@ namespace Shopify.Controllers
                 return NotFound();
             return Ok(result);
         }
-
-
-
         // add product
         [HttpPost]
         public ActionResult<Brand> AddProduct([FromBody] Product product)
@@ -62,27 +60,25 @@ namespace Shopify.Controllers
             }
 
         }
-
-
         //edit product
-        [HttpPut("{id}")]
-        public ActionResult EditProduct(int id, [FromBody] Product product)
-        {
+        //[HttpPut("{id}")]
+        //public ActionResult EditProduct(int id, [FromBody] Product product)
+        //{
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                product.ProductId = id;
-                var result = _productRepo.EditProductAsync(product);
-                if (result != null)
-                    return NoContent();
-                return NotFound();
-            }
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    else
+        //    {
+        //        product.ProductId = id;
+        //        var result = _productRepo.EditProductAsync(product);
+        //        if (result != null)
+        //            return NoContent();
+        //        return NotFound();
+        //    }
 
-        }
+        //}
 
 
 

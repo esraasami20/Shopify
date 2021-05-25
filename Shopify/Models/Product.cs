@@ -20,9 +20,7 @@ namespace Shopify.Models
         [Range(5,maximum:100000)]
         public float Price { get; set; }
 
-        public float ?Discount { get; set; }
-
-       
+        public float ?Discount { get; set; }    
 
         [Required]
         [StringLength(50, MinimumLength = 5)]
@@ -32,7 +30,6 @@ namespace Shopify.Models
         public string Color { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
-
         public virtual List<ProductImages> ProductImages { get; set; }
         public virtual List<ProductDetail> ProductDetails { get; set; }
 
@@ -43,22 +40,12 @@ namespace Shopify.Models
         [ForeignKey("subCategory")]
         public int ?SubCategotyId { get; set; }
         public virtual SubCategory subCategory { get; set; }
-
-
-        [ForeignKey("Promotions")]
-        
+        [ForeignKey("Promotions")]        
         public int? PromotionId { get; set; }
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
         public virtual Promotions Promotions { get; set; }
         public virtual List<Review> Reviews { get; set; }
         public virtual List<View> Views { get; set; }
-       
-
-
-
-
-
-
     }
 }
