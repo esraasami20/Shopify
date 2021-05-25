@@ -147,22 +147,24 @@ namespace Shopify.Controllers
 
 
         // forget password
-        [HttpGet("forget-password")]
+        [HttpGet("forget-password/{email}")]
 
-        public async Task<ActionResult> ForgetPassword([FromBody]ForgetPasswordModel model)
+        public async Task<ActionResult> ForgetPassword(string email)
         {
+            ForgetPasswordModel model = new ForgetPasswordModel{ Email=email};
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             else
             {
-              var result = await _authentication.ForgetPasswordAsync(model);
+             var result = await _authentication.ForgetPasswordAsync(model);
                 if (result.Status == "Success")
                     return Ok();
-
+                else if(result.Status=="Error")
                 return BadRequest(new Response { Status=result.Status,Message=result.Message});
-             
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
             }
         }
 

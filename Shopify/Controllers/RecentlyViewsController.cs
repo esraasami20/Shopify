@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Shopify.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RecentlyViewsController : ControllerBase
@@ -21,7 +22,7 @@ namespace Shopify.Controllers
         }
 
         // add  recently views to customer
-        [Authorize]
+        
         [HttpPost("add-recently-view/{id}")]
         public ActionResult AddrecentlyView(int id)
         {
@@ -45,7 +46,7 @@ namespace Shopify.Controllers
 
         // get customer recently view
 
-        [Authorize]
+        
         [HttpGet("get-recently-view")]
         public ActionResult GetRecentlyView()
         {
@@ -57,7 +58,7 @@ namespace Shopify.Controllers
 
 
         // add product to favourite
-        [Authorize]
+        
         [HttpPost("add-to-favourite/{id}")]
         public ActionResult AddToFavoutite(int id)
         {
@@ -69,7 +70,7 @@ namespace Shopify.Controllers
 
 
         // add product to favourite
-        [Authorize]
+       
         [HttpDelete("remove-from-favourite/{id}")]
         public ActionResult RemoveFromFavoutite(int id)
         {
@@ -81,7 +82,7 @@ namespace Shopify.Controllers
 
 
         // get customer favourites 
-        [Authorize]
+      
         [HttpGet("favourites")]
         public ActionResult GetCustomerFavoutites()
         {

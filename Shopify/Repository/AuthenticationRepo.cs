@@ -25,9 +25,9 @@ namespace Shopify.Repository
         private EmployeeRepo _employeeRepo;
         private SellerRepo _sellerRepo;
         private  JwtHelper _jwt;
-       
+        EmailHelper _emailHelper ;
 
-        public AuthenticationRepo(UserManager<ApplicationUser> userManager, ManageRoles manageRoles, CustomerRepo customerRepo, EmployeeRepo employeeRepo, SellerRepo sellerRepo, IOptions<JwtHelper> jwt)
+        public AuthenticationRepo(UserManager<ApplicationUser> userManager, ManageRoles manageRoles, CustomerRepo customerRepo, EmployeeRepo employeeRepo, SellerRepo sellerRepo, IOptions<JwtHelper> jwt , EmailHelper emailHelper )
         {
             _manageRoles = manageRoles;
             _userManager = userManager;
@@ -35,9 +35,10 @@ namespace Shopify.Repository
             _sellerRepo = sellerRepo;
             _employeeRepo= employeeRepo;
             _jwt = jwt.Value;
-           
+             _emailHelper= emailHelper; ;
 
-    }
+
+        }
 
      
 
@@ -266,9 +267,11 @@ namespace Shopify.Repository
                 var encodeToken = Encoding.UTF8.GetBytes(token);
                 var validToken = WebEncoders.Base64UrlEncode(encodeToken);
 
-
-                EmailHelper.SendEmail(model.Email, validToken);
-                return  new Response {Status = "Success", Message = "this email not valid" }; 
+               
+               var result = await _emailHelper.SendEmailAsync(model.Email, validToken);
+                if(result)
+                return  new Response {Status = "Success", Message = "this email not valid" };
+                return new Response { Status = "Error2", Message = "please try again" };
             }
         }
 

@@ -29,5 +29,7 @@ namespace Shopify.ViewModels
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
 
+      
+
     }
 }

@@ -56,6 +56,7 @@ namespace Shopify
             });
 
 
+
             services.AddDbContext<ShopifyContext>(op =>
             {
                 op.UseSqlServer(Configuration.GetConnectionString("myconnection"));
@@ -70,6 +71,7 @@ namespace Shopify
 
 
             services.Configure<JwtHelper>(Configuration.GetSection("JWT"));
+            services.Configure<EmailConfiuration>(Configuration.GetSection("MailSettings"));
 
             services.AddAuthentication(options =>
             {
@@ -105,7 +107,10 @@ namespace Shopify
             services.AddScoped<PromotionRepo>();
             services.AddScoped<ProductRepo>();
             services.AddScoped<RecentlyViewRepo>();
+            services.AddScoped<EmailHelper>();
         }
+
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -116,6 +121,22 @@ namespace Shopify
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shopify v1"));
             }
+            app.UseStaticFiles();// For the wwwroot folder
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                            Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/Images"
+            });
+            //Enable directory browsing
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                            Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/Images"
+            });
+
            
 
             app.UseRouting();
