@@ -205,7 +205,7 @@ namespace Shopify.Repository
             _sellerRepo.AddSellerId(user.Id ,model.StoreName , pathes);
 
             await _manageRoles.AddToSellerRole(user);
-            return new ResponseAuth { Message = "Sign up has done successully pleaze wait until we review your documents " };
+            return new ResponseAuth { Message = "Sign up has done successully pleaze wait until we review your documents " ,IsAuthenticated=true };
         }
 
 
