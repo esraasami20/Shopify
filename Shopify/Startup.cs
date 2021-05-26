@@ -108,6 +108,8 @@ namespace Shopify
             services.AddScoped<ProductRepo>();
             services.AddScoped<RecentlyViewRepo>();
             services.AddScoped<EmailHelper>();
+            services.AddScoped<StatusRepo>();
+            services.AddScoped<GovernorateRebo>();
         }
 
 
