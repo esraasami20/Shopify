@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Shopify.Controllers
 {
-    
+     [Authorize(Roles ="Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -24,12 +24,14 @@ namespace Shopify.Controllers
         }
         // get all categories
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult<List<Category>> GetAll()
         {
             return _categoryRepo.GetAllCategories();
         }
         // get gategory by id
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public ActionResult<Category> GetCategory(int id)
         {
             var result = _categoryRepo.GetCategory(id);
@@ -39,6 +41,7 @@ namespace Shopify.Controllers
         }
         // add category
         [HttpPost]
+       
         public async Task<ActionResult<Category>> AddCategoryAsync([FromForm]Category category, [FromForm] IFormFile file)
         {
 
@@ -82,8 +85,7 @@ namespace Shopify.Controllers
         [HttpDelete("{id}")]
         public ActionResult<Category> deleteCategory(int id)
         {
-           
-                
+
           var result =  _categoryRepo.DeleteCategory(id);
             if(result!=null)
                return NoContent();

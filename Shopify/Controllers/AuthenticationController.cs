@@ -64,7 +64,7 @@ namespace Shopify.Controllers
 
         [HttpPost]
         [Route("register-emplyee")]
-       // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Registeremplyee([FromBody] RegisterModel model)
         {
 
@@ -88,16 +88,24 @@ namespace Shopify.Controllers
         [HttpPost]
         [Route("register-seller")]
         
-        public async Task<IActionResult> Registerseller([FromBody] RegisterModel model)
+        public async Task<IActionResult> Registerseller([FromForm] RegisterSellerModel model  ,  IFormFile[] files)
         {
+
             if (ModelState.IsValid)
             {
-                var result = await _authentication.RegisterSellerAsync(model);
-                if (!result.IsAuthenticated)
+                if (files.Length == 4)
                 {
-                    return BadRequest(result.Message);
+                    var result = await _authentication.RegisterSellerAsync(model , files);
+                    if (!result.IsAuthenticated)
+                    {
+                        return BadRequest(result.Message);
+                    }
+                    return Ok(result);
                 }
-                return Ok(result);
+                else
+                {
+                    return BadRequest();
+                }
             }
             return BadRequest(ModelState);
         }

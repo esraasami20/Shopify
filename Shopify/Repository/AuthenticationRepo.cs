@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -49,6 +50,10 @@ namespace Shopify.Repository
             {
                 return new ResponseAuth { Message = "email or password not valid" };
             }
+            if (user.AdminLocked)
+            {
+                 return new ResponseAuth { Message = "email or password not valid" };
+            }
            
             var token = await CreateJwtToken(user);
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -67,11 +72,12 @@ namespace Shopify.Repository
 
         public async Task<ResponseAuth> RegisterCustomerAsync(RegisterModel model)
         {
-           
+            string username = model.Email.Split('@')[0];
+
             if (await _userManager.FindByEmailAsync(model.Email)!=null)
                 return new ResponseAuth{Message="Email is already Exist"};
 
-            if (await _userManager.FindByNameAsync(model.Username) != null)
+            if (await _userManager.FindByNameAsync(username) != null)
                 return new ResponseAuth { Message = "Username is already Exist" };
 
             ApplicationUser user = new ApplicationUser()
@@ -80,7 +86,7 @@ namespace Shopify.Repository
                 Lname = model.Lname,
                 Address = model.Address,
                 Email = model.Email,
-                UserName = model.Username,
+                UserName =username,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
@@ -103,7 +109,7 @@ namespace Shopify.Repository
             return new ResponseAuth
             {
                 Email = user.Email,
-                UserName = user.Email,
+                UserName = username,
                 Role = "Customer",
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 ExpireDate = token.ValidTo,
@@ -117,10 +123,11 @@ namespace Shopify.Repository
 
         public async Task<ResponseAuth> RegisterEmployeeAsync(RegisterModel model)
         {
+            string username = model.Email.Split('@')[0];
             if (await _userManager.FindByEmailAsync(model.Email) != null)
                 return new ResponseAuth { Message = "Email is already Exist" };
 
-            if (await _userManager.FindByNameAsync(model.Username) != null)
+            if (await _userManager.FindByNameAsync(username) != null)
                 return new ResponseAuth { Message = "Username is already Exist" };
 
             ApplicationUser user = new ApplicationUser()
@@ -129,7 +136,7 @@ namespace Shopify.Repository
                 Lname = model.Lname,
                 Address = model.Address,
                 Email = model.Email,
-                UserName = model.Username,
+                UserName =username,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
@@ -152,7 +159,7 @@ namespace Shopify.Repository
             return new ResponseAuth
             {
                 Email = user.Email,
-                UserName = user.Email,
+                UserName = username,
                 Role = "Employee",
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 ExpireDate = token.ValidTo,
@@ -161,12 +168,13 @@ namespace Shopify.Repository
             };
         }
 
-        public async Task<ResponseAuth> RegisterSellerAsync(RegisterModel model)
+        public async Task<ResponseAuth> RegisterSellerAsync(RegisterSellerModel model , IFormFile[] files)
         {
+            string username = model.Email.Split('@')[0];
             if (await _userManager.FindByEmailAsync(model.Email) != null)
                 return new ResponseAuth { Message = "Email is already Exist" };
 
-            if (await _userManager.FindByNameAsync(model.Username) != null)
+            if (await _userManager.FindByNameAsync(username) != null)
                 return new ResponseAuth { Message = "Username is already Exist" };
 
             ApplicationUser user = new ApplicationUser()
@@ -175,8 +183,10 @@ namespace Shopify.Repository
                 Lname = model.Lname,
                 Address = model.Address,
                 Email = model.Email,
-                UserName = model.Username,
-                SecurityStamp = Guid.NewGuid().ToString()
+                UserName = username,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                AdminLocked = true,
+                PhoneNumber = model.PhoneNumber
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -191,30 +201,22 @@ namespace Shopify.Repository
 
             }
 
-            _sellerRepo.AddSellerId(user.Id);
+            var pathes = await FileHelper.SaveFilesSellerDocumentsAsync(user.Id, files);
+            _sellerRepo.AddSellerId(user.Id ,model.StoreName , pathes);
 
             await _manageRoles.AddToSellerRole(user);
-            var token = await CreateJwtToken(user);
-            return new ResponseAuth
-            {
-                Email = user.Email,
-                UserName = user.Email,
-                Role = "Seller",
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                ExpireDate = token.ValidTo,
-                IsAuthenticated = true
-
-            };
+            return new ResponseAuth { Message = "Sign up has done successully pleaze wait until we review your documents " };
         }
 
 
 
         public async Task<ResponseAuth> RegisterAdminAsync(RegisterModel model)
         {
+            string username = model.Email.Split('@')[0];
             if (await _userManager.FindByEmailAsync(model.Email) != null)
                 return new ResponseAuth { Message = "Email is already Exist" };
 
-            if (await _userManager.FindByNameAsync(model.Username) != null)
+            if (await _userManager.FindByNameAsync(username) != null)
                 return new ResponseAuth { Message = "Username is already Exist" };
 
             ApplicationUser user = new ApplicationUser()
@@ -223,7 +225,7 @@ namespace Shopify.Repository
                 Lname = model.Lname,
                 Address = model.Address,
                 Email = model.Email,
-                UserName = model.Username,
+                UserName =username ,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
 
@@ -243,8 +245,8 @@ namespace Shopify.Repository
             var token = await CreateJwtToken(user);
             return new ResponseAuth
             {
-                Email = user.Email,
-                UserName = user.Email,
+                Email =user.Email ,
+                UserName = username,
                 Role = "Admin",
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 ExpireDate = token.ValidTo,
@@ -257,6 +259,7 @@ namespace Shopify.Repository
         public async Task<Response> ForgetPasswordAsync(ForgetPasswordModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
+           
             if (user == null)
             {
                 return new Response { Status = "Error", Message = "this email not valid" };
@@ -348,6 +351,6 @@ namespace Shopify.Repository
             return jwtSecurityToken;
         }
 
-       
+      
     }
 }

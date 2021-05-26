@@ -14,7 +14,9 @@ namespace Shopify.Models
         // citty street bu
         [Required]
         public string City { get; set; }
+        [Required]
         public string Street { get; set; }
+        [Required]
         public string BuildingNumber { get; set; }
 
         [ForeignKey("Seller")]
@@ -22,6 +24,7 @@ namespace Shopify.Models
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
         public virtual Seller Seller { get; set; }
+        public virtual InventoryProduct InventoryProduct { get; set; }
 
 
     }

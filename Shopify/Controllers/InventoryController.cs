@@ -7,28 +7,36 @@ using System.Threading.Tasks;
 using Shopify.Repository.Interfaces;
 using Shopify.Repository;
 using Shopify.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Shopify.Controllers
 {
+    [Authorize(Roles = "Seller")]
     [Route("api/[controller]")]
     [ApiController]
     public class InventoryController : ControllerBase
     {
         
-        private readonly ShopifyContext _shopifyContext;
+       
         private InventoryRepo _inventoryRepo;
-        public InventoryController(InventoryRepo inventoryRepo, ShopifyContext shopifyContext)
+        public InventoryController(InventoryRepo inventoryRepo)
         {
             _inventoryRepo = inventoryRepo;
-            _shopifyContext = shopifyContext;
+          
         }
+
+
        
-        // get all inventories
+        // get all inventories for seller
         [HttpGet]
         public ActionResult<List<Inventory>> GetAll()
         {
-            return _inventoryRepo.GetAllInventories();
+            return _inventoryRepo.GetAllInventories(User.Identity);
         }
+
+
+
+
         // get Inventory by id
         [HttpGet("{id}")]
         public ActionResult<Inventory> GetCategory(int id)
@@ -38,22 +46,27 @@ namespace Shopify.Controllers
                 return NotFound();
             return Ok(result);
         }
+
         // add Inventory
+        
         [HttpPost]
-        public async Task<Inventory> AddInventory(Inventory inventory)
+        public async Task<ActionResult<Inventory>> AddInventory(Inventory inventory)
         {
-            if (inventory != null)
+            if (ModelState.IsValid)
             {
-                _shopifyContext.Inventories.Add(inventory);
-                _shopifyContext.SaveChanges();
+
+                 var result = await _inventoryRepo.AddInventory(inventory , User.Identity);
+                if (result != null)
+                    return Ok(inventory);
+                return   StatusCode(StatusCodes.Status500InternalServerError, "Try again");
             }
-            return inventory;
+            return BadRequest(ModelState);
         }
 
 
         //edit Inventory
         [HttpPut("{id}")]
-        public async Task<ActionResult<Inventory>> AddInventoryAsync(int id, [FromForm] Inventory inventory)
+        public async Task<ActionResult<Inventory>> AddInventoryAsync(int id, [FromBody] Inventory inventory)
         {
 
             if (!ModelState.IsValid)
@@ -77,8 +90,6 @@ namespace Shopify.Controllers
         [HttpDelete("{id}")]
         public ActionResult<Inventory> deleteInventory(int id)
         {
-
-
             var result = _inventoryRepo.DeleteInventory(id);
             if (result != null)
                 return NoContent();

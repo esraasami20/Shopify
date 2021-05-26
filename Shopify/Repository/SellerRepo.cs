@@ -17,11 +17,14 @@ namespace Shopify.Repository
             _db = db;
         }
 
-        public void AddSellerId(string id)
+        public void AddSellerId(string id , string storeName , List<string > documents)
         {
-            _db.Sellers.Add(new Seller() { SellerId = id });
-            _db.SaveChanges();
+            _db.Sellers.Add(new Seller() { SellerId = id  ,StoreName = storeName, Contract= documents[0], NationalCard = documents[1], TaxCard=documents[2], CommercialRegistryCard = documents[3] });
+           _db.SaveChanges();
         }
+
+
+
         // get all Seller
         public List<ApplicationUser> GetAllSellers()
         {

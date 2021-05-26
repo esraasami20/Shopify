@@ -1,4 +1,5 @@
-﻿using Shopify.Helper;
+﻿using Microsoft.AspNetCore.Http;
+using Shopify.Helper;
 using Shopify.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Shopify.Repository.Interfaces
     {
         public Task<ResponseAuth> RegisterCustomerAsync(RegisterModel model);
         public Task<ResponseAuth> RegisterEmployeeAsync(RegisterModel model);
-        public Task<ResponseAuth> RegisterSellerAsync(RegisterModel model);
+        public Task<ResponseAuth> RegisterSellerAsync(RegisterSellerModel model, IFormFile[] file);
         public Task<ResponseAuth> RegisterAdminAsync(RegisterModel model);
         public Task<ResponseAuth> LoginAsync(LoginModel model);
         public Task<Response> ForgetPasswordAsync(ForgetPasswordModel model);

@@ -11,13 +11,14 @@ namespace Shopify.Models
     {
 
         public int ProductId { get; set; }
-        public virtual Product Product { get; set; }
+        public virtual List<Product> Product { get; set; }
 
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
 
         public int InventoryId { get; set; }
         public virtual Inventory Inventory { get; set; }
+       
 
 
         [Required]

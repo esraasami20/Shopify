@@ -460,6 +460,7 @@ namespace Shopify.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("BuildingNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
@@ -470,6 +471,7 @@ namespace Shopify.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Street")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("sellerId")
@@ -498,7 +500,8 @@ namespace Shopify.Migrations
 
                     b.HasKey("InventoryId", "ProductId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("InventoryId")
+                        .IsUnique();
 
                     b.ToTable("InventoryProducts");
                 });
@@ -531,7 +534,7 @@ namespace Shopify.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BrandId")
+                    b.Property<int>("BrandId")
                         .HasColumnType("int");
 
                     b.Property<string>("Color")
@@ -543,6 +546,12 @@ namespace Shopify.Migrations
 
                     b.Property<float?>("Discount")
                         .HasColumnType("real");
+
+                    b.Property<int?>("InventoryProductInventoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("InventoryProductProductId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Isdeleted")
                         .HasColumnType("bit");
@@ -563,7 +572,7 @@ namespace Shopify.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int?>("SubCategotyId")
+                    b.Property<int>("SubCategotyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -576,6 +585,8 @@ namespace Shopify.Migrations
                     b.HasIndex("PromotionId");
 
                     b.HasIndex("SubCategotyId");
+
+                    b.HasIndex("InventoryProductInventoryId", "InventoryProductProductId");
 
                     b.ToTable("Products");
                 });
@@ -600,6 +611,11 @@ namespace Shopify.Migrations
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -685,8 +701,24 @@ namespace Shopify.Migrations
                     b.Property<string>("SellerId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("CommercialRegistryCard")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Contract")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("Isdeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("NationalCard")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StoreName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaxCard")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SellerId");
 
@@ -932,27 +964,21 @@ namespace Shopify.Migrations
             modelBuilder.Entity("Shopify.Models.InventoryProduct", b =>
                 {
                     b.HasOne("Shopify.Models.Inventory", "Inventory")
-                        .WithMany()
-                        .HasForeignKey("InventoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Shopify.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
+                        .WithOne("InventoryProduct")
+                        .HasForeignKey("Shopify.Models.InventoryProduct", "InventoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Inventory");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Shopify.Models.Product", b =>
                 {
                     b.HasOne("Shopify.Models.Brand", "Brand")
                         .WithMany("Products")
-                        .HasForeignKey("BrandId");
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Shopify.Models.Promotions", "Promotions")
                         .WithMany("Products")
@@ -960,7 +986,13 @@ namespace Shopify.Migrations
 
                     b.HasOne("Shopify.Models.SubCategory", "subCategory")
                         .WithMany("Products")
-                        .HasForeignKey("SubCategotyId");
+                        .HasForeignKey("SubCategotyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Shopify.Models.InventoryProduct", null)
+                        .WithMany("Product")
+                        .HasForeignKey("InventoryProductInventoryId", "InventoryProductProductId");
 
                     b.Navigation("Brand");
 
@@ -1104,6 +1136,16 @@ namespace Shopify.Migrations
             modelBuilder.Entity("Shopify.Models.Governorate", b =>
                 {
                     b.Navigation("ShippingDetails");
+                });
+
+            modelBuilder.Entity("Shopify.Models.Inventory", b =>
+                {
+                    b.Navigation("InventoryProduct");
+                });
+
+            modelBuilder.Entity("Shopify.Models.InventoryProduct", b =>
+                {
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Shopify.Models.Payment", b =>

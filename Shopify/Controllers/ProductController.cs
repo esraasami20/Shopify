@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shopify.Models;
 using Shopify.Repository;
@@ -22,47 +23,59 @@ namespace Shopify.Controllers
             _productRepo = productRepo;
             _shopifyContext = shopifyContext;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
-        {
-            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-            var pagedData =  _shopifyContext.Products
-                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
-                .Take(validFilter.PageSize)
-                .ToList();
-            var totalRecords =  _shopifyContext.Products.Count();
-            return Ok(new PagedPagination<List<Product>>(pagedData, validFilter.PageNumber, validFilter.PageSize));
-        }
 
-        // get product by id
-        [HttpGet("{id}")]
-        public ActionResult<Product> GetProduct(int id)
-        {
-            var result = _productRepo.GetProduct(id);
-            if (result == null)
-                return NotFound();
-            return Ok(result);
-        }
+
+
+
         // add product
-        [HttpPost]
-        public ActionResult<Brand> AddProduct([FromBody] Product product)
+        [Authorize(Roles ="Seller")]
+        [HttpPost("{inventoryId}")]
+        public async Task<ActionResult> AddProductAsync( [FromForm]Product product ,[FromForm] IFormFile [] files , int inventoryId)
         {
-
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return BadRequest();
+                var result = await _productRepo.AddProdctAsync(product , inventoryId, files, User.Identity);
+                if (result.Status== "Success")
+
+                    return Ok(result);
+                return BadRequest(result.Message);
             }
             else
             {
-                Product result = _productRepo.AddProduct(product);
-
-                return Ok(result);
+                return BadRequest();
             }
-
+            
         }
-        //edit product
-        //[HttpPut("{id}")]
-        //public ActionResult EditProduct(int id, [FromBody] Product product)
+
+
+
+
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
+        //{
+        //    var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+        //    var pagedData =  _shopifyContext.Products
+        //        .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+        //        .Take(validFilter.PageSize)
+        //        .ToList();
+        //    var totalRecords =  _shopifyContext.Products.Count();
+        //    return Ok(new PagedPagination<List<Product>>(pagedData, validFilter.PageNumber, validFilter.PageSize));
+        //}
+
+        //// get product by id
+        //[HttpGet("{id}")]
+        //public ActionResult<Product> GetProduct(int id)
+        //{
+        //    var result = _productRepo.GetProduct(id);
+        //    if (result == null)
+        //        return NotFound();
+        //    return Ok(result);
+        //}
+        //// add product
+        //[HttpPost]
+        //public ActionResult<Brand> AddProduct([FromBody] Product product)
         //{
 
         //    if (!ModelState.IsValid)
@@ -71,28 +84,45 @@ namespace Shopify.Controllers
         //    }
         //    else
         //    {
-        //        product.ProductId = id;
-        //        var result = _productRepo.EditProductAsync(product);
-        //        if (result != null)
-        //            return NoContent();
-        //        return NotFound();
+        //        Product result = _productRepo.AddProduct(product);
+
+        //        return Ok(result);
         //    }
 
         //}
+        ////edit product
+        ////[HttpPut("{id}")]
+        ////public ActionResult EditProduct(int id, [FromBody] Product product)
+        ////{
+
+        ////    if (!ModelState.IsValid)
+        ////    {
+        ////        return BadRequest();
+        ////    }
+        ////    else
+        ////    {
+        ////        product.ProductId = id;
+        ////        var result = _productRepo.EditProductAsync(product);
+        ////        if (result != null)
+        ////            return NoContent();
+        ////        return NotFound();
+        ////    }
+
+        ////}
 
 
 
-        // delete product
-        [HttpDelete("{id}")]
-        public ActionResult deleteProduct(int id)
-        {
+        //// delete product
+        //[HttpDelete("{id}")]
+        //public ActionResult deleteProduct(int id)
+        //{
 
 
-            var result = _productRepo.DeleteProduct(id);
-            if (result != null)
-                return NoContent();
-            return NotFound();
-        }
+        //    var result = _productRepo.DeleteProduct(id);
+        //    if (result != null)
+        //        return NoContent();
+        //    return NotFound();
+        //}
 
     }
 }

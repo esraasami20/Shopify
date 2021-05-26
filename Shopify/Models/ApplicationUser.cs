@@ -29,7 +29,7 @@ namespace Shopify.Models
         public string Address { get; set; }
 
 
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool AdminLocked { get; set; }
 
 

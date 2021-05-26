@@ -21,6 +21,15 @@ namespace Shopify.Models
         public virtual List<Promotions> Promotions { get; set; }
 
 
+        public string  NationalCard { get; set; }
+        public string  Contract { get; set; }
+        public string  TaxCard { get; set; }
+        public string CommercialRegistryCard { get; set; }
+
+        [Required]
+        public string StoreName { get; set; }
+
+
 
     }
 }

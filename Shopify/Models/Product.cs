@@ -33,12 +33,15 @@ namespace Shopify.Models
         public virtual List<ProductImages> ProductImages { get; set; }
         public virtual List<ProductDetail> ProductDetails { get; set; }
 
+        [Required]
         [ForeignKey("Brand")]
-        public int ?BrandId { get; set; }
+
+        public int BrandId { get; set; }
         public virtual Brand Brand { get; set; }
 
+        [Required]
         [ForeignKey("subCategory")]
-        public int ?SubCategotyId { get; set; }
+        public int SubCategotyId { get; set; }
         public virtual SubCategory subCategory { get; set; }
         [ForeignKey("Promotions")]        
         public int? PromotionId { get; set; }

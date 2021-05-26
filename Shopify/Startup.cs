@@ -121,20 +121,27 @@ namespace Shopify
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shopify v1"));
             }
+
+
+          
+
+           
             app.UseStaticFiles();// For the wwwroot folder
 
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                            Path.Combine(Directory.GetCurrentDirectory(), "Images")),
-                RequestPath = "/Images"
+                            Path.Combine(Directory.GetCurrentDirectory(), "Files")),
+                RequestPath = "/Files"
+
+
             });
             //Enable directory browsing
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                            Path.Combine(Directory.GetCurrentDirectory(), "Images")),
-                RequestPath = "/Images"
+                            Path.Combine(Directory.GetCurrentDirectory(), "Files")),
+                RequestPath = "/Files"
             });
 
            

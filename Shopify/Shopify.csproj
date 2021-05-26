@@ -22,8 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Images\Categories\" />
-    <Folder Include="Images\SubCategories\" />
+    <Folder Include="Files\Images\Categories\" />
+    <Folder Include="Files\Images\Products\" />
+    <Folder Include="Files\Images\SubCategories\" />
+    <Folder Include="Files\sellers\Id\" />
+    <Folder Include="Files\sellers\contract\" />
+    <Folder Include="Files\sellers\CommercialCard\" />
+    <Folder Include="Files\sellers\TaxCard\" />
   </ItemGroup>
 
 </Project>

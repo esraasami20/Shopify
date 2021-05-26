@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shopify.Helper;
 using Shopify.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace Shopify.Repository
@@ -16,9 +18,10 @@ namespace Shopify.Repository
             _db = db;
         }
         //get all inventories
-        public List<Inventory> GetAllInventories()
+        public List<Inventory> GetAllInventories(IIdentity seller)
         {
-            return _db.Inventories.Include("Seller").Where(c => c.Isdeleted == false).ToList();
+              var sellerId  = HelperMethods.GetAuthnticatedUserId(seller);
+              return _db.Sellers.Include(i=>i.Inventories).FirstOrDefault(s=>s.SellerId == sellerId).Inventories;
         }
 
         // get inventory by id
@@ -28,10 +31,12 @@ namespace Shopify.Repository
             return inventory;
         }
         // add   inventory
-        public async Task<Inventory> AddInventory(Inventory inventory)
+        public async Task<Inventory> AddInventory(Inventory inventory, IIdentity seller)
         {
+            string sellerId = HelperMethods.GetAuthnticatedUserId(seller);
             if (inventory != null)
             {
+                inventory.sellerId = sellerId;
                 _db.Inventories.Add(inventory);
                 _db.SaveChanges();
             }
