@@ -11,33 +11,33 @@ namespace Shopify.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StatusController : ControllerBase
+    public class GovernorateController : ControllerBase
     {
-        StatusRepo _statusRepo;
+        GovernorateRebo _governorateRebo;
 
-        public StatusController(StatusRepo statusRepo)
+        public GovernorateController(GovernorateRebo governorateRebo)
         {
-            _statusRepo = statusRepo;
+            _governorateRebo = governorateRebo;
         }
-        //get all status
+        //get all Governorate
         [HttpGet]
-        public ActionResult<List<Status>> getall()
+        public ActionResult<List<Governorate>> getall()
         {
-            return _statusRepo.GetAllStatus();
+            return _governorateRebo.GetAllGovernorate();
         }
 
-        // get Status by id
+        // get Governorate by id
         [HttpGet("{id}")]
-        public ActionResult<Status> GetStatus(int id)
+        public ActionResult<Governorate> GetStatus(int id)
         {
-            var result = _statusRepo.GetStatus(id);
+            var result = _governorateRebo.GetGovernorate(id);
             if (result == null)
                 return NotFound();
             return Ok(result);
         }
-        // add status
+        // add Governorate
         [HttpPost]
-        public ActionResult<Status> AddStatus([FromBody] Status status)
+        public ActionResult<Governorate> AddGovernorate([FromBody] Governorate governorate)
         {
 
             if (!ModelState.IsValid)
@@ -46,15 +46,15 @@ namespace Shopify.Controllers
             }
             else
             {
-                Status result = _statusRepo.AddStatus(status);
+                Governorate result = _governorateRebo.AddGovernorate(governorate);
 
                 return Ok(result);
             }
 
         }
-        //edit Status
+        //edit Governorate
         [HttpPut("{id}")]
-        public ActionResult EditStatus(int id, [FromBody] Status status)
+        public ActionResult EditGovernorate(int id, [FromBody] Governorate governorate)
         {
 
             if (!ModelState.IsValid)
@@ -63,23 +63,22 @@ namespace Shopify.Controllers
             }
             else
             {
-                status.StatusId = id;
-                var result = _statusRepo.EditStatus(status);
+                governorate.GovernorateId = id;
+                var result = _governorateRebo.EditStatus(governorate);
                 if (result != null)
                     return NoContent();
                 return NotFound();
             }
 
         }
-        // delete Status
+        // delete Governorate
         [HttpDelete("{id}")]
-        public ActionResult deleteStatus(int id)
+        public ActionResult deleteGovernorate(int id)
         {
-            var result = _statusRepo.DeleteStatus(id);
+            var result = _governorateRebo.DeleteGovernorate(id);
             if (result != null)
                 return NoContent();
             return NotFound();
         }
-
     }
 }
