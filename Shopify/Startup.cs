@@ -96,20 +96,20 @@ namespace Shopify
 
             services.AddScoped<IAuthentication , AuthenticationRepo>();
 
-            services.AddScoped<CustomerRepo>();
-            services.AddScoped<EmployeeRepo>();
-            services.AddScoped<SellerRepo>();
+            services.AddScoped<CustomerServices>();
+            services.AddScoped<EmployeeService>();
+            services.AddScoped<SellerService>();
             services.AddScoped<ManageRoles>();
-            services.AddScoped<CategoryRepo>();
-            services.AddScoped<SubCategoryRepo>();
-            services.AddScoped<BrandRepo>();
-            services.AddScoped<InventoryRepo>();
-            services.AddScoped<PromotionRepo>();
-            services.AddScoped<ProductRepo>();
-            services.AddScoped<RecentlyViewRepo>();
+            services.AddScoped<CategoryService>();
+            services.AddScoped<SubCategoryService>();
+            services.AddScoped<BrandService>();
+            services.AddScoped<InventoryServices>();
+            services.AddScoped<PromotionService>();
+            services.AddScoped<ProductService>();
+            services.AddScoped<RecentlyViewService>();
             services.AddScoped<EmailHelper>();
-            services.AddScoped<StatusRepo>();
-            services.AddScoped<GovernorateRebo>();
+            services.AddScoped<StatusService>();
+            services.AddScoped<GovernorateService>();
         }
 
 

@@ -13,9 +13,9 @@ namespace Shopify.Controllers
     [ApiController]
     public class StatusController : ControllerBase
     {
-        StatusRepo _statusRepo;
+        StatusService _statusRepo;
 
-        public StatusController(StatusRepo statusRepo)
+        public StatusController(StatusService statusRepo)
         {
             _statusRepo = statusRepo;
         }

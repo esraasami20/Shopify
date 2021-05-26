@@ -13,9 +13,9 @@ namespace Shopify.Controllers
     [ApiController]
     public class GovernorateController : ControllerBase
     {
-        GovernorateRebo _governorateRebo;
+        GovernorateService _governorateRebo;
 
-        public GovernorateController(GovernorateRebo governorateRebo)
+        public GovernorateController(GovernorateService governorateRebo)
         {
             _governorateRebo = governorateRebo;
         }

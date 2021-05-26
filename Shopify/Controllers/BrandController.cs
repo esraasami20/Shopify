@@ -18,9 +18,9 @@ namespace Shopify.Controllers
 
 
 
-        BrandRepo _brandRepo;
+        BrandService _brandRepo;
 
-        public BrandController(BrandRepo brandRepo)
+        public BrandController(BrandService brandRepo)
         {
             _brandRepo = brandRepo;
         }

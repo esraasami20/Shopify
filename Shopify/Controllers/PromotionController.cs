@@ -14,9 +14,9 @@ namespace Shopify.Controllers
     [ApiController]
     public class PromotionController : ControllerBase
     {
-        private PromotionRepo _promotionRepo;
+        private PromotionService _promotionRepo;
 
-        public PromotionController(PromotionRepo promotionRepo)
+        public PromotionController(PromotionService promotionRepo)
         {
             _promotionRepo = promotionRepo;
         }

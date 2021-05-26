@@ -22,9 +22,9 @@ namespace Shopify.Controllers
     {
         private ShopifyContext _shopifyContext;
         private readonly UserManager<ApplicationUser> _applicationUser;
-        private readonly CustomerRepo _customerRepo;
+        private readonly CustomerServices _customerRepo;
 
-        public CustomerController(ShopifyContext shopifyContext, UserManager<ApplicationUser> applicationUser, CustomerRepo customerRepo)
+        public CustomerController(ShopifyContext shopifyContext, UserManager<ApplicationUser> applicationUser, CustomerServices customerRepo)
         {
             _shopifyContext = shopifyContext;
             _applicationUser = applicationUser;

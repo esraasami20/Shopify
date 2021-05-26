@@ -12,21 +12,21 @@ using System.Threading.Tasks;
 
 namespace Shopify.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin  , Employee")]
     [Route("api/[controller]")]
     [ApiController]
     public class SubCategoryController : ControllerBase
     {
-        SubCategoryRepo _subCategoryRepo;
+        SubCategoryService _subCategoryRepo;
 
-        public SubCategoryController(SubCategoryRepo subCategoryRepo)
+        public SubCategoryController(SubCategoryService subCategoryRepo)
         {
             _subCategoryRepo = subCategoryRepo;
         }
 
 
         // get sub category by id
-
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public ActionResult<SubCategory> GetSubCategory(int id)
         {

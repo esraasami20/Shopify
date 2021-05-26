@@ -15,10 +15,10 @@ namespace Shopify.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        ProductRepo _productRepo;
+        ProductService _productRepo;
         ShopifyContext _shopifyContext;
 
-        public ProductController(ProductRepo productRepo,ShopifyContext shopifyContext)
+        public ProductController(ProductService productRepo,ShopifyContext shopifyContext)
         {
             _productRepo = productRepo;
             _shopifyContext = shopifyContext;

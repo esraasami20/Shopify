@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace Shopify.Controllers
 {
-     [Authorize(Roles ="Admin")]
+    [Authorize(Roles ="Admin , Employee")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        CategoryRepo _categoryRepo;
+        CategoryService _categoryRepo;
 
-        public CategoryController(CategoryRepo categoryRepo)
+        public CategoryController(CategoryService categoryRepo)
         {
             _categoryRepo = categoryRepo;
         }
@@ -29,6 +29,9 @@ namespace Shopify.Controllers
         {
             return _categoryRepo.GetAllCategories();
         }
+
+
+
         // get gategory by id
         [HttpGet("{id}")]
         [AllowAnonymous]
@@ -39,12 +42,15 @@ namespace Shopify.Controllers
                 return NotFound();
             return Ok(result);
         }
+
+
+
+
         // add category
         [HttpPost]
        
         public async Task<ActionResult<Category>> AddCategoryAsync([FromForm]Category category, [FromForm] IFormFile file)
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest();

@@ -18,8 +18,8 @@ namespace Shopify.Controllers
     {
         
        
-        private InventoryRepo _inventoryRepo;
-        public InventoryController(InventoryRepo inventoryRepo)
+        private InventoryServices _inventoryRepo;
+        public InventoryController(InventoryServices inventoryRepo)
         {
             _inventoryRepo = inventoryRepo;
           
@@ -41,11 +41,12 @@ namespace Shopify.Controllers
         [HttpGet("{id}")]
         public ActionResult<Inventory> GetCategory(int id)
         {
-            var result = _inventoryRepo.GetInventoryById(id);
+            var result = _inventoryRepo.GetInventoryById(id , User.Identity);
             if (result == null)
                 return NotFound();
             return Ok(result);
         }
+
 
         // add Inventory
         
@@ -64,6 +65,7 @@ namespace Shopify.Controllers
         }
 
 
+
         //edit Inventory
         [HttpPut("{id}")]
         public async Task<ActionResult<Inventory>> AddInventoryAsync(int id, [FromBody] Inventory inventory)
@@ -71,12 +73,12 @@ namespace Shopify.Controllers
 
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(inventory);
             }
             else
             {
                 inventory.InventoryId = id;
-                var result = await _inventoryRepo.EditInventoryAsync(inventory,id);
+                var result =_inventoryRepo.EditInventoryAsync(inventory , User.Identity);
                 if (result != null)
                     return NoContent();
                 return NotFound();
@@ -85,12 +87,11 @@ namespace Shopify.Controllers
         }
 
 
-
-        // delete inventory
-        [HttpDelete("{id}")]
+        //delete inventory
+       [HttpDelete("{id}")]
         public ActionResult<Inventory> deleteInventory(int id)
         {
-            var result = _inventoryRepo.DeleteInventory(id);
+            var result = _inventoryRepo.DeleteInventory(id ,User.Identity);
             if (result != null)
                 return NoContent();
             return NotFound();

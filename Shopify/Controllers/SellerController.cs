@@ -17,9 +17,9 @@ namespace Shopify.Controllers
     {
         private ShopifyContext _shopifyContext;
         private readonly UserManager<ApplicationUser> _applicationUser;
-        private readonly SellerRepo _sellerRepo;
+        private readonly SellerService _sellerRepo;
 
-        public SellerController(ShopifyContext shopifyContext ,UserManager<ApplicationUser> applicationUser,SellerRepo sellerRepo )
+        public SellerController(ShopifyContext shopifyContext ,UserManager<ApplicationUser> applicationUser,SellerService sellerRepo )
         {
             _shopifyContext = shopifyContext;
             _applicationUser = applicationUser;

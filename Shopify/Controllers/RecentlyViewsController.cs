@@ -14,9 +14,9 @@ namespace Shopify.Controllers
     [ApiController]
     public class RecentlyViewsController : ControllerBase
     {
-        private readonly RecentlyViewRepo _recentlyViewRepo;
+        private readonly RecentlyViewService _recentlyViewRepo;
 
-        public  RecentlyViewsController( RecentlyViewRepo recentlyViewRepo)
+        public  RecentlyViewsController( RecentlyViewService recentlyViewRepo)
         {
             _recentlyViewRepo = recentlyViewRepo;
         }

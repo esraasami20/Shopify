@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,6 +17,7 @@ namespace Shopify.Models
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
 
+       
         public int InventoryId { get; set; }
         public virtual Inventory Inventory { get; set; }
        
