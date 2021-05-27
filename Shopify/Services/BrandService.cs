@@ -1,4 +1,5 @@
-﻿using Shopify.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Shopify.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace Shopify.Repository
             SubCategory subCategory = _db.SubCategories.Where(s => s.SubCategoryId == id && s.Isdeleted ==false).FirstOrDefault();
             if (subCategory != null)
             {
-              return  _db.SubCategories.Where(s => s.CategoryId == id).FirstOrDefault().Brands;
+              return _db.SubCategories.Include(i=>i.Brands).Where(s => s.SubCategoryId == id && s.Isdeleted == false).FirstOrDefault().Brands;
             }
             return null;
         }

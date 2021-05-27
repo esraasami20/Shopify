@@ -27,8 +27,18 @@ namespace Shopify.Repository
             return result;
         }
 
-
-
+        // get sub categories by category id
+        
+         public List<SubCategory> GetSubCategoryByCategoryId(int id)
+          {
+             var category =  _db.Categories.FirstOrDefault(c => c.CategoryId == id && c.Isdeleted == false);
+            if (category != null)
+            {
+                List<SubCategory> result = _db.SubCategories.Where(c => c.CategoryId == id && c.Isdeleted == false).ToList();
+                return result;
+            }
+            return null;
+          }
 
         // add sub category 
         public async Task<SubCategory> AddSubCategoryAsync( SubCategory subCategory , IFormFile file)
@@ -136,7 +146,7 @@ namespace Shopify.Repository
             SubCategory subCategory = GetSubCategory(id);
             if (subCategory != null)
             {
-                return subCategory.Products.Where(p => p.SubCategotyId == id).Select(c => c.Color).ToList();
+                return subCategory.Products.Where(p => p.SubCategotyId == id).Select(c => c.Color).Distinct().ToList();
 
             }
             return null;
@@ -149,7 +159,7 @@ namespace Shopify.Repository
             SubCategory subCategory = GetSubCategory(id);
             if (subCategory != null)
             {
-                return subCategory.Products.Where(p => p.SubCategotyId == id).Select(c=>c.Size).ToList();
+                return subCategory.Products.Where(p => p.SubCategotyId == id).Select(c=>c.Size).Distinct().ToList();
                 
             }
             return null;

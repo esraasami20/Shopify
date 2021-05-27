@@ -24,7 +24,8 @@ namespace Shopify.Models
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
         public virtual Seller Seller { get; set; }
-        public virtual InventoryProduct InventoryProduct { get; set; }
+        public virtual List<InventoryProduct> InventoryProducts { get; set; }
+
 
 
     }

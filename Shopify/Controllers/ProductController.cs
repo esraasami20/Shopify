@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Shopify.Helper;
 using Shopify.Models;
 using Shopify.Repository;
 using Shopify.Repository.Interfaces;
+using Shopify.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +20,13 @@ namespace Shopify.Controllers
     {
         ProductService _productRepo;
         ShopifyContext _shopifyContext;
+       
 
         public ProductController(ProductService productRepo,ShopifyContext shopifyContext)
         {
             _productRepo = productRepo;
             _shopifyContext = shopifyContext;
+            
         }
 
 
@@ -52,30 +57,72 @@ namespace Shopify.Controllers
 
 
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll([FromQuery] PaginationFilter filter)
-        //{
-        //    var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
-        //    var pagedData =  _shopifyContext.Products
-        //        .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
-        //        .Take(validFilter.PageSize)
-        //        .ToList();
-        //    var totalRecords =  _shopifyContext.Products.Count();
-        //    return Ok(new PagedPagination<List<Product>>(pagedData, validFilter.PageNumber, validFilter.PageSize));
-        //}
+         // add product details
 
-        //// get product by id
-        //[HttpGet("{id}")]
-        //public ActionResult<Product> GetProduct(int id)
-        //{
-        //    var result = _productRepo.GetProduct(id);
-        //    if (result == null)
-        //        return NotFound();
-        //    return Ok(result);
-        //}
-        //// add product
-        //[HttpPost]
-        //public ActionResult<Brand> AddProduct([FromBody] Product product)
+        [HttpPost("add-details/{productId}/{InventoryId}")]
+        [Authorize(Roles ="Seller")]
+
+        public ActionResult AddProductDetails(int productId , int InventoryId ,ProductDetail [] productDetails )
+        {
+            if (ModelState.IsValid)
+            {
+                var result = _productRepo.AddProdctDetails(productId, InventoryId, productDetails, User.Identity);
+                if (result.Status == "Success")
+                    return Ok(new Response { Status="Success" , Message ="Dtails Added successfully"});
+                return NotFound();
+            }
+            return BadRequest(ModelState);
+           
+        }
+
+
+
+
+
+
+
+        // get products pagination
+
+        [HttpGet("{subCategoryId}")]
+        public async Task<ActionResult> GetAllAsync(int subCategoryId , [FromQuery] PaginationFilter filter)
+        {
+
+            var result = await _productRepo.GetProductsAsync(subCategoryId, filter, Request);
+            return Ok(result);
+        }
+
+
+
+        // search 
+
+        [HttpGet("search")]
+        public  ActionResult Search([FromQuery] string name)
+        {
+
+            var result =  _productRepo.SearchProduct(name);
+            return Ok(result);
+        }
+
+
+        // get product by id
+
+        [HttpGet("Details/{id}")]
+        public ActionResult<Product> GetProductById(int id)
+        {
+            var result = _productRepo.GetProductById(id);
+             if(result!=null)
+                return Ok(result);
+            return NotFound();
+        }
+
+
+
+
+
+
+        //edit product
+        //[HttpPut("{id}")]
+        //public ActionResult EditProduct(int id, [FromBody] Product product)
         //{
 
         //    if (!ModelState.IsValid)
@@ -84,45 +131,27 @@ namespace Shopify.Controllers
         //    }
         //    else
         //    {
-        //        Product result = _productRepo.AddProduct(product);
-
-        //        return Ok(result);
+        //        product.ProductId = id;
+        //        var result = _productRepo.EditProductAsync(product);
+        //        if (result != null)
+        //            return NoContent();
+        //        return NotFound();
         //    }
 
         //}
-        ////edit product
-        ////[HttpPut("{id}")]
-        ////public ActionResult EditProduct(int id, [FromBody] Product product)
-        ////{
-
-        ////    if (!ModelState.IsValid)
-        ////    {
-        ////        return BadRequest();
-        ////    }
-        ////    else
-        ////    {
-        ////        product.ProductId = id;
-        ////        var result = _productRepo.EditProductAsync(product);
-        ////        if (result != null)
-        ////            return NoContent();
-        ////        return NotFound();
-        ////    }
-
-        ////}
 
 
 
-        //// delete product
-        //[HttpDelete("{id}")]
-        //public ActionResult deleteProduct(int id)
-        //{
-
-
-        //    var result = _productRepo.DeleteProduct(id);
-        //    if (result != null)
-        //        return NoContent();
-        //    return NotFound();
-        //}
+        // delete product
+        [Authorize(Roles ="Seller")]
+        [HttpDelete("{id}")]
+        public ActionResult DeleteProduct(int id)
+        {
+            var result = _productRepo.DeleteProduct(id);
+            if (result)
+                return NoContent();
+            return NotFound();
+        }
 
     }
 }

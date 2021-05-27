@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,8 @@ using Shopify.Helper;
 using Shopify.Models;
 using Shopify.Repository;
 using Shopify.Repository.Interfaces;
+using Shopify.Services;
+using Shopify.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -61,6 +64,16 @@ namespace Shopify
             {
                 op.UseSqlServer(Configuration.GetConnectionString("myconnection"));
 
+            });
+
+
+            services.AddHttpContextAccessor();
+            services.AddSingleton<IUriService>(o =>
+            {
+                var accessor = o.GetRequiredService<IHttpContextAccessor>();
+                var request = accessor.HttpContext.Request;
+                var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+                return new UriService(uri);
             });
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShopifyContext>().AddDefaultTokenProviders();

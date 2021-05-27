@@ -27,6 +27,7 @@ namespace Shopify.Controllers
 
 
         // get brands for sub category
+        [AllowAnonymous]
         [HttpGet("subCat/{id}")]
         public ActionResult<List<Brand>> GetAllBrandForSubCat(int id)
         {

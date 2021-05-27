@@ -37,6 +37,19 @@ namespace Shopify.Controllers
         }
 
 
+
+        // get sub catergories by category id
+        [AllowAnonymous]
+        [HttpGet("Category/{id}")]
+        public ActionResult<SubCategory> GetSubCategoryByCategoryId(int id)
+        {
+            var result = _subCategoryRepo.GetSubCategoryByCategoryId(id);
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
+
+
         // add category
         [HttpPost("{id}")]
         public async Task<ActionResult<SubCategory>> AddCategoryAsync(int id,[FromForm] SubCategory subCategory, [FromForm] IFormFile file)
@@ -112,7 +125,7 @@ namespace Shopify.Controllers
 
 
         // get all colors for specific sub-category
-
+        [AllowAnonymous]
         [HttpGet("colors/{id}")]
         public ActionResult<List<string>> GetColors(int id)
         {
@@ -129,7 +142,7 @@ namespace Shopify.Controllers
 
 
         // get all size for specific sub-category
-
+        [AllowAnonymous]
         [HttpGet("sizes/{id}")]
         public ActionResult<List<string>> GetSizes(int id)
         {
@@ -147,7 +160,7 @@ namespace Shopify.Controllers
 
 
         // get all size for specific sub-category
-
+        [AllowAnonymous]
         [HttpGet("range-money/{id}")]
         public ActionResult<List<string>> GetRangeMoney(int id)
         {

@@ -100,7 +100,7 @@ namespace Shopify.Controllers
                     {
                         return BadRequest(result.Message);
                     }
-                    return Ok(result);
+                    return Ok(result.Message);
                 }
                 else
                 {

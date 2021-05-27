@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopify.Helper;
 using Shopify.Models;
+using Shopify.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,22 +18,13 @@ namespace Shopify.Repository.Interfaces
 
 
         ShopifyContext _db;
-        public ProductService(ShopifyContext db)
+        private readonly IUriService _uriService;
+        public ProductService(ShopifyContext db , IUriService uriService)
         {
             _db = db;
+            _uriService = uriService;
+
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -66,12 +58,19 @@ namespace Shopify.Repository.Interfaces
 
                 // add to inventory
 
-                    _db.InventoryProducts.Add(new InventoryProduct { InventoryId = inventoryId, ProductId = product.ProductId });
+                    _db.InventoryProducts.Add(new InventoryProduct { InventoryId = inventoryId, ProductId = product.ProductId  ,Quantity =product.Quantity});
                     _db.SaveChanges();
                     return new Response { Status = "Success", Message = "product added successfully" , data = product };
                 }
                 return new Response { Status = "Error", Message = "Inventory not found"};
         }
+
+           public Product GetProductById(int id)
+           {
+             return _db.Products.Include(rr=>rr.Reviews).Include(r=>r.ProductDetails).Include(i=>i.ProductImages).FirstOrDefault(p=>p.ProductId == id);
+           }
+
+
 
 
 
@@ -105,65 +104,42 @@ namespace Shopify.Repository.Interfaces
 
         }
 
+        public bool DeleteProduct(int id)
+        {
+           Product product = _db.Products.FirstOrDefault(p => p.ProductId == id && p.IsdeletedBySeller==false);
+            product.IsdeletedBySeller = true;
+            _db.SaveChanges();
+            return true;
+        }
 
 
-        //public List<Product> GetAllProduct()
-        //{
-        //    return _db.Products.Include(x => x.ProductImages)
-        //                        .Include(t => t.ProductDetails)
-        //                        .Include(b => b.Brand)
-        //                        .Include(z => z.subCategory)
-        //                        .ThenInclude(q => q.Category)
-        //                        .Include(k => k.Promotions)
-        //                        .Include(v => v.Reviews)
-        //                        .Include(m => m.Views)
-        //                        .Where(c => c.Isdeleted == false)
-        //                        .ToList();
-        //}
-        //// get product by id
-        //public Product GetProduct(int id)
-        //{
-        //    return _db.Products.Where(b => b.ProductId == id && 
-        //                              b.Isdeleted == false 
-        //                              )
-        //                        .Include(x => x.ProductImages)
-        //                        .Include(t=>t.ProductDetails)
-        //                        .Include(b=>b.Brand)
-        //                        .ThenInclude(s=>s.SubCategories)
-        //                        .Include(z=>z.subCategory)
-        //                        .ThenInclude(q=>q.Category)
-        //                        .Include(k=>k.Promotions)
-        //                        .Include(v=>v.Reviews)
-        //                        .Include(m=>m.Views)
-        //                        .FirstOrDefault();
-        //}
 
-        //// add product 
-        //public Product AddProduct(Product product)
-        //{
-        //    _db.Products.Add(product);
-        //    _db.SaveChanges();
-        //    return product;
-        //}
 
-        ////  edit product
-        ////public Product EditProductAsync(Product product)
-        ////{
-        ////    Product productDetails = GetProduct(product.ProductId);
-        ////    if (productDetails != null)
-        ////    {
-        ////        productDetails.ProductName = product.ProductName;
-        ////        productDetails.Price = product.Price;
-        ////        productDetails.Discount = product.Discount;
-        ////        productDetails.Size = product.Size;
-        ////        productDetails.Color = product.Color;
-        ////        productDetails.SubCategotyId = product.SubCategotyId;
-        ////        productDetails.PromotionId = product.PromotionId;
-        ////        _db.SaveChanges();
-        ////        return productDetails;
-        ////    }
-        ////    return null;
-        ////}
+
+
+        // get products patination
+
+
+        public async Task<PagedPagination<List<Product>>> GetProductsAsync(int subCategoryId, PaginationFilter filter, HttpRequest request)
+        {
+            var route = request.Path.Value;
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var pagedData = await _db.Products.Include(i => i.ProductImages).Where(s => s.SubCategotyId == subCategoryId && s.IsdeletedBySeller==false)
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToListAsync();
+            var totalRecords = await _db.Products.Where(s => s.SubCategotyId == subCategoryId).CountAsync();
+           return PaginationHelper.CreatePagedReponse<Product>(pagedData, validFilter, totalRecords, _uriService, route);
+        }
+
+
+
+        public  List<Product> SearchProduct(string name)
+        {
+          return _db.Products.Include(i=>i.ProductImages).Where(p => p.ProductName.Contains(name) && p.IsdeletedBySeller ==false && p.IsdeletedBySpoify == false).ToList();
+        }
+
+
 
 
         ////  delete Product

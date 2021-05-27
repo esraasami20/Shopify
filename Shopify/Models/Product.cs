@@ -23,11 +23,24 @@ namespace Shopify.Models
         public float ?Discount { get; set; }    
 
         [Required]
-        [StringLength(50, MinimumLength = 5)]
+        [StringLength(50, MinimumLength = 2)]
         public string Size { get; set; }
 
         [Required]
         public string Color { get; set; }
+
+
+
+
+        [NotMapped]
+        [Required]
+        [Range(1,1000)]
+        public int Quantity { get; set; }
+
+
+        [Required]
+        public int QuantitySealed { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
         public virtual List<ProductImages> ProductImages { get; set; }
@@ -52,5 +65,6 @@ namespace Shopify.Models
         public virtual Promotions Promotions { get; set; }
         public virtual List<Review> Reviews { get; set; }
         public virtual List<View> Views { get; set; }
+        public virtual List<InventoryProduct> InventoryProducts { get; set; }
     }
 }

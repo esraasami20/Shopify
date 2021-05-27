@@ -83,7 +83,10 @@ namespace Shopify.Repository.Interfaces
             Category category = GetCategory(id);
             if (category != null) {
                 category.Isdeleted = true;
-               category.SubCategories.Select(s => s.Isdeleted = true);
+                foreach (var subCategory in category.SubCategories)
+                {
+                    subCategory.Isdeleted = true;
+                };
                 _db.SaveChanges();
                
             }
