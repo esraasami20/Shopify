@@ -65,17 +65,21 @@ namespace Shopify.Controllers
         [HttpPost]
         [Route("register-emplyee")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Registeremplyee([FromBody] RegisterModel model)
+        public async Task<IActionResult> Registeremplyee([FromBody] RegisterEmployeeViewModel model)
         {
 
             if (ModelState.IsValid)
             {
-                var result = await _authentication.RegisterEmployeeAsync(model);
-                if (!result.IsAuthenticated)
+                if (model.Salary > 0)
                 {
-                    return BadRequest(result.Message);
+                    var result = await _authentication.RegisterEmployeeAsync(model);
+                    if (!result.IsAuthenticated)
+                    {
+                        return BadRequest(result.Message);
+                    }
+                    return Ok(result);
                 }
-                return Ok(result);
+                return BadRequest();
             }
             return BadRequest(ModelState);
         }

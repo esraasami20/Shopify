@@ -67,6 +67,12 @@ namespace Shopify.Models
           .HasDefaultValueSql("getdate()");
 
 
+
+         builder.Entity<Employee>()
+        .Property(b => b.hireDate)
+        .HasDefaultValueSql("getdate()");
+
+
         }
 
         public ShopifyContext(DbContextOptions options) : base(options)

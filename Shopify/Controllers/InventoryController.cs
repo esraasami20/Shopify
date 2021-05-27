@@ -36,7 +36,6 @@ namespace Shopify.Controllers
 
 
 
-
         // get Inventory by id
         [HttpGet("{id}")]
         public ActionResult<Inventory> GetCategory(int id)

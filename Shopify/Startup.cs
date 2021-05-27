@@ -53,10 +53,7 @@ namespace Shopify
                 });
             });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shopify", Version = "v1" });
-            });
+          
 
 
 
@@ -123,6 +120,15 @@ namespace Shopify
             services.AddScoped<EmailHelper>();
             services.AddScoped<StatusService>();
             services.AddScoped<GovernorateService>();
+            
+
+
+
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shopify", Version = "v1" });
+            });
         }
 
 
@@ -137,10 +143,6 @@ namespace Shopify
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shopify v1"));
             }
 
-
-          
-
-           
             app.UseStaticFiles();// For the wwwroot folder
 
             app.UseStaticFiles(new StaticFileOptions

@@ -121,7 +121,7 @@ namespace Shopify.Repository
 
         }
 
-        public async Task<ResponseAuth> RegisterEmployeeAsync(RegisterModel model)
+        public async Task<ResponseAuth> RegisterEmployeeAsync(RegisterEmployeeViewModel model)
         {
             string username = model.Email.Split('@')[0];
             if (await _userManager.FindByEmailAsync(model.Email) != null)
@@ -152,7 +152,7 @@ namespace Shopify.Repository
 
             }
 
-            _employeeRepo.AddEmployeeId(user.Id);
+            _employeeRepo.AddEmployeeId(user.Id,model.Salary ,model.hireDate);
 
             await _manageRoles.AddToEmployeeRole(user);
             var token = await CreateJwtToken(user);
