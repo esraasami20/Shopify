@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using Shopify.Models;
 using Shopify.Helper;
 using Shopify.Repository.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Shopify.Controllers
-{
+{ 
+    [Authorize(Roles ="Seller")]
     [Route("api/[controller]")]
     [ApiController]
     public class PromotionController : ControllerBase
@@ -34,9 +36,13 @@ namespace Shopify.Controllers
                 return NotFound();
             return Ok(result);
         }
+
+
+
+
         // add promotion
         [HttpPost]
-        public async Task<ActionResult<Promotions>> AddCategoryAsync([FromForm] Promotions promotion, [FromForm] IFormFile file)
+        public ActionResult<Promotions> AddCategoryAsync([FromBody] Promotions promotion)
         {
 
             if (!ModelState.IsValid)
@@ -45,7 +51,7 @@ namespace Shopify.Controllers
             }
             else
             {
-                Promotions result = await _promotionRepo.addPromotion(promotion, file);
+                Promotions result =  _promotionRepo.addPromotion(promotion, User.Identity);
 
                 return Ok(result);
             }
@@ -53,9 +59,23 @@ namespace Shopify.Controllers
         }
 
 
+        // add pormotion to product 
+        [HttpPost("a/{PormotionId}")]
+        public ActionResult AddPromotionToProduct(int PormotionId, [FromBody]int ProductId)
+        {
+            var result = _promotionRepo.AddPromotionToProduct(PormotionId, ProductId, User.Identity);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound();
+        }
+
+
+
         //edit Promotions
         [HttpPut("{id}")]
-        public async Task<ActionResult<Promotions>> AddCategoryAsync(int id, [FromForm] Promotions promotion, [FromForm] IFormFile file)
+        public  ActionResult AddCategoryAsync(int id, [FromBody] Promotions promotion)
         {
 
             if (!ModelState.IsValid)
@@ -65,8 +85,8 @@ namespace Shopify.Controllers
             else
             {
                 promotion.PromotionsId = id;
-                var result = await _promotionRepo.EditPromotionAsync(promotion, file);
-                if (result != null)
+                var result =  _promotionRepo.EditPromotionAsync(promotion , User.Identity);
+                if (result)
                     return NoContent();
                 return NotFound();
             }
@@ -77,12 +97,11 @@ namespace Shopify.Controllers
 
         // delete promotion
         [HttpDelete("{id}")]
-        public ActionResult<Promotions> deletePromotion(int id)
+        public ActionResult deletePromotion(int id)
         {
 
-
-            var result = _promotionRepo.Deletepromotion(id);
-            if (result != null)
+            var result = _promotionRepo.Deletepromotion(id , User.Identity);
+            if (result)
                 return NoContent();
             return NotFound();
         }

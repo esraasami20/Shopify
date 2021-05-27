@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 using Shopify.Models;
 using Microsoft.AspNetCore.Identity;
 using Shopify.Repository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Shopify.Controllers
-{
+{   [Authorize(Roles ="Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class SellerController : ControllerBase
@@ -26,12 +27,25 @@ namespace Shopify.Controllers
             _sellerRepo = sellerRepo;
         }
 
-        //get sellers data
-        [HttpGet]
-        public ActionResult<List<ApplicationUser>> GetAll()
+        //get active sellers data
+        [HttpGet("Active")]
+        public ActionResult<List<Seller>> GetAllActive()
         {
-            return _sellerRepo.GetAllSellers();
+            return _sellerRepo.GetAllActiveSellers();
         }
+
+
+        //get waiting sellers data
+        [HttpGet("waiting")]
+        public ActionResult<List<Seller>> GetAllWaitingSeller()
+        {
+            return _sellerRepo.GetAllWaitingSellers();
+        }
+
+
+
+
+
         //get seller by id
         [HttpGet("{id}")]
         public async Task<ActionResult<Seller>> GetSellerById(string id)
@@ -83,7 +97,30 @@ namespace Shopify.Controllers
 
 
 
-       
-        
+
+        // apply seller
+         [HttpGet("apply/{id}")]
+         public ActionResult ApplySeller(string id)
+         {
+           var result = _sellerRepo.ApplySeller(id);
+            if (result == true)
+                return NoContent();
+            return NotFound();
+         }
+
+
+
+
+
+        // block seller
+        [HttpGet("block/{id}")]
+        public ActionResult BlockSeller(string id)
+        {
+            var result = _sellerRepo.BlockSeller(id);
+            if (result == true)
+                return NoContent();
+            return NotFound();
+        }
+
     }
 }

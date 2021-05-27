@@ -57,22 +57,22 @@ namespace Shopify.Controllers
 
 
 
-         // add product details
+        // add product details
 
         [HttpPost("add-details/{productId}/{InventoryId}")]
-        [Authorize(Roles ="Seller")]
+        [Authorize(Roles = "Seller")]
 
-        public ActionResult AddProductDetails(int productId , int InventoryId ,ProductDetail [] productDetails )
+        public ActionResult AddProductDetails(int productId, int InventoryId, ProductDetail[] productDetails)
         {
             if (ModelState.IsValid)
             {
                 var result = _productRepo.AddProdctDetails(productId, InventoryId, productDetails, User.Identity);
                 if (result.Status == "Success")
-                    return Ok(new Response { Status="Success" , Message ="Dtails Added successfully"});
+                    return Ok(new Response { Status = "Success", Message = "Dtails Added successfully" });
                 return NotFound();
             }
             return BadRequest(ModelState);
-           
+
         }
 
 
@@ -151,6 +151,18 @@ namespace Shopify.Controllers
             if (result)
                 return NoContent();
             return NotFound();
+        }
+
+
+
+
+
+        // get top seales
+        [HttpGet("top-seales")]
+        public ActionResult<List<Product>> GetTopSeales()
+        {
+            List<Product> topProducts = _productRepo.GetTopSeales();
+            return Ok(topProducts);
         }
 
     }

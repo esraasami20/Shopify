@@ -16,7 +16,8 @@ namespace Shopify.Repository
         //get all governorate
         public List<Governorate> GetAllGovernorate()
         {
-            return _db.Governorates.ToList();
+            return _db.Governorates.Where(g=>g.Isdeleted==false).ToList();
+            
 
         }
         // get Governorate by id

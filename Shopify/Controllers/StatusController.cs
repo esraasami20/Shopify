@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shopify.Models;
 using Shopify.Repository;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Shopify.Controllers
 {
+    [Authorize(Roles ="Admin , Employee")]
     [Route("api/[controller]")]
     [ApiController]
     public class StatusController : ControllerBase
@@ -21,6 +23,7 @@ namespace Shopify.Controllers
         }
         //get all status
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult<List<Status>> getall()
         {
             return _statusRepo.GetAllStatus();
@@ -28,6 +31,7 @@ namespace Shopify.Controllers
 
         // get Status by id
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public ActionResult<Status> GetStatus(int id)
         {
             var result = _statusRepo.GetStatus(id);

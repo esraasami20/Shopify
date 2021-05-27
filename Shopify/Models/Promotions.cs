@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,9 +13,12 @@ namespace Shopify.Models
 
         public int PromotionsId { get; set; }     
 
-        public float Discount { get; set; }
-        public string Description { get; set; }
-        public string Image { get; set; }
+        [Range(0,100)]
+        [Required]
+        public float Discount { get; set; } // in precentage
+        [Required]
+        public string Description { get; set; } 
+        //public string Image { get; set; }
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
 

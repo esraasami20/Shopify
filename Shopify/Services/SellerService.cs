@@ -25,21 +25,30 @@ namespace Shopify.Repository
 
 
 
-        // get all Seller
-        public List<ApplicationUser> GetAllSellers()
+        // get all active Seller
+        public List<Seller> GetAllActiveSellers()
         {
-            List<ApplicationUser> sellerData = new List<ApplicationUser>();
-            var sellerId = _db.Sellers.ToList();
 
-            foreach (var item in sellerId)
-            {
-                var seller = _db.Users.Where(c => c.AdminLocked == false).FirstOrDefault(a => a.Id == item.SellerId);
-
-                sellerData.Add(seller);
-            }
-            return sellerData;
+            List<Seller> sellers = _db.Sellers.Include(i => i.ApplicationUser).Where(t => t.ApplicationUser.AdminLocked == false).ToList();
+            return sellers;
 
         }
+
+
+      
+
+        // get all waiting Seller
+        public List<Seller> GetAllWaitingSellers()
+        {
+          
+            List<Seller> sellers = _db.Sellers.Include(i => i.ApplicationUser ).Where(t=>t.ApplicationUser.AdminLocked==true).ToList();
+            return sellers;
+
+        }
+
+
+
+
         //edit seller
         public async Task<ApplicationUser> PutSeller(string id, [FromBody] ApplicationUser user)
         {
@@ -56,7 +65,37 @@ namespace Shopify.Repository
             await _db.SaveChangesAsync();
             return userSeller;
         }
-        
 
+        public bool ApplySeller(string id)
+        {
+           Seller seller = _db.Sellers.Include(a=>a.ApplicationUser).FirstOrDefault(s => s.SellerId == id);
+            if (seller != null)
+            {
+                seller.ApplicationUser.AdminLocked = false;
+                _db.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+
+        public bool BlockSeller(string id)
+        {
+            Seller seller = _db.Sellers.Include(a => a.ApplicationUser).FirstOrDefault(s => s.SellerId == id);
+            if (seller != null)
+            {
+                seller.ApplicationUser.AdminLocked = true;
+                _db.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

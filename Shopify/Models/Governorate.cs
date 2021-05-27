@@ -15,8 +15,10 @@ namespace Shopify.Models
         [StringLength(30,MinimumLength =3)]
         public string GovernorateName { get; set; }
         [Required]
+        [Range(1,20)]
         public int Duration { get; set; }
         [Required]
+        [Range(1, 3000)]
         public float ShippingValue { get; set; }
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }

@@ -12,6 +12,7 @@ namespace Shopify.Models
 
 
         public virtual DbSet<Brand> Brands { get; set; }
+        public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public virtual DbSet<Cart> Carts { get; set; }
         public virtual DbSet<CartItem>  CartItems { get; set; }
         public virtual DbSet<Category> Categories { get; set; }

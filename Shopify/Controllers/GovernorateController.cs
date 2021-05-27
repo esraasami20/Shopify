@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shopify.Models;
 using Shopify.Repository;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Shopify.Controllers
 {
+    [Authorize(Roles = "Admin,Employee")]
     [Route("api/[controller]")]
     [ApiController]
     public class GovernorateController : ControllerBase
@@ -20,6 +22,7 @@ namespace Shopify.Controllers
             _governorateRebo = governorateRebo;
         }
         //get all Governorate
+        [AllowAnonymous]
         [HttpGet]
         public ActionResult<List<Governorate>> getall()
         {
@@ -27,6 +30,7 @@ namespace Shopify.Controllers
         }
 
         // get Governorate by id
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public ActionResult<Governorate> GetStatus(int id)
         {
@@ -36,6 +40,7 @@ namespace Shopify.Controllers
             return Ok(result);
         }
         // add Governorate
+        
         [HttpPost]
         public ActionResult<Governorate> AddGovernorate([FromBody] Governorate governorate)
         {
@@ -53,6 +58,7 @@ namespace Shopify.Controllers
 
         }
         //edit Governorate
+       
         [HttpPut("{id}")]
         public ActionResult EditGovernorate(int id, [FromBody] Governorate governorate)
         {

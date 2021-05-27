@@ -114,6 +114,13 @@ namespace Shopify.Repository.Interfaces
 
 
 
+        public List<Product>  GetTopSeales()
+        {
+          return  _db.Products.Where(p=>p.IsdeletedBySeller==false && p.IsdeletedBySpoify ==true).OrderByDescending(p => p.QuantitySealed).Take(5).ToList();
+        }
+
+
+
 
 
 
