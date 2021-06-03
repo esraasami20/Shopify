@@ -69,7 +69,7 @@ namespace Shopify.Controllers
         }
 
 
-        // add product to favourite
+        // reomve product to favourite
        
         [HttpDelete("remove-from-favourite/{id}")]
         public ActionResult RemoveFromFavoutite(int id)

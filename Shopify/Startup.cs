@@ -18,10 +18,12 @@ using Shopify.Repository;
 using Shopify.Repository.Interfaces;
 using Shopify.Services;
 using Shopify.Services.Interfaces;
+using Shopify.ViewModels.Facebook;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -82,6 +84,7 @@ namespace Shopify
 
             services.Configure<JwtHelper>(Configuration.GetSection("JWT"));
             services.Configure<EmailConfiuration>(Configuration.GetSection("MailSettings"));
+            services.Configure<FacebookSettings>(Configuration.GetSection("facebookConfig"));
 
             services.AddAuthentication(options =>
             {
@@ -104,8 +107,10 @@ namespace Shopify
                    };
                });
 
-            services.AddScoped<IAuthentication , AuthenticationRepo>();
 
+
+
+            services.AddScoped<IAuthentication , AuthenticationRepo>();
             services.AddScoped<CustomerServices>();
             services.AddScoped<EmployeeService>();
             services.AddScoped<SellerService>();
@@ -120,6 +125,9 @@ namespace Shopify
             services.AddScoped<EmailHelper>();
             services.AddScoped<StatusService>();
             services.AddScoped<GovernorateService>();
+            services.AddScoped<FacebookService>();
+            services.AddScoped<FacebookSettings>();
+            services.AddHttpClient();
             
 
 

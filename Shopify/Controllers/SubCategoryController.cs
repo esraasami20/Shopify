@@ -139,8 +139,6 @@ namespace Shopify.Controllers
         }
 
 
-
-
         // get all size for specific sub-category
         [AllowAnonymous]
         [HttpGet("sizes/{id}")]

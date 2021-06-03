@@ -27,6 +27,8 @@ namespace Shopify.Controllers
         {
             return _promotionRepo.GetAllPromotions();
         }
+
+
         //get promotion by id
         [HttpGet("{id}")]
         public ActionResult<Promotions> GetPromotion(int id)

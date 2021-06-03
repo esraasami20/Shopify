@@ -15,6 +15,7 @@ namespace Shopify.Repository.Interfaces
         public Task<ResponseAuth> RegisterSellerAsync(RegisterSellerModel model, IFormFile[] file);
         public Task<ResponseAuth> RegisterAdminAsync(RegisterModel model);
         public Task<ResponseAuth> LoginAsync(LoginModel model);
+        public Task<ResponseAuth> LoginWithFacebookAsync(string accessToken);
         public Task<Response> ForgetPasswordAsync(ForgetPasswordModel model);
         public Task<Response> ResetPasswordAsync(ResetPasswordModel model);
     }

@@ -10,6 +10,7 @@ using Shopify.Models;
 using Shopify.Repository;
 using Shopify.Repository.Interfaces;
 using Shopify.ViewModels;
+using Shopify.ViewModels.Facebook;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -156,6 +157,28 @@ namespace Shopify.Controllers
 
 
 
+        // login facebook 
+        [HttpPost("login-facebook")]
+        public async Task<IActionResult> LoginFacebook([FromBody] FacebookLoginModel Data)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var result = await _authentication.LoginWithFacebookAsync(Data.accessToken);
+                if (!result.IsAuthenticated)
+
+                    return BadRequest(result.Message);
+
+                return Ok(result);
+            }
+            return BadRequest(ModelState);
+        }
+        
+      
+            
+        
+
+
 
 
         // forget password
@@ -185,7 +208,7 @@ namespace Shopify.Controllers
         // reset password
         [HttpPost("reset-password")]
 
-        public async Task<ActionResult> ForgetPassword([FromBody] ResetPasswordModel model)
+        public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordModel model)
         {
             if (!ModelState.IsValid)
             {

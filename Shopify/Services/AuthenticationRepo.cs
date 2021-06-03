@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shopify.Helper;
 using Shopify.Models;
 using Shopify.Repository.Interfaces;
+using Shopify.Services.Interfaces;
 using Shopify.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace Shopify.Repository
 {
     public class AuthenticationRepo : IAuthentication
     {
-
+        private readonly FacebookService _facebookService;
         private readonly UserManager<ApplicationUser> _userManager;
         private ManageRoles _manageRoles;
         private CustomerServices _customerRepo;
@@ -28,7 +29,7 @@ namespace Shopify.Repository
         private  JwtHelper _jwt;
         EmailHelper _emailHelper ;
 
-        public AuthenticationRepo(UserManager<ApplicationUser> userManager, ManageRoles manageRoles, CustomerServices customerRepo, EmployeeService employeeRepo, SellerService sellerRepo, IOptions<JwtHelper> jwt , EmailHelper emailHelper )
+        public AuthenticationRepo(UserManager<ApplicationUser> userManager, ManageRoles manageRoles, CustomerServices customerRepo, EmployeeService employeeRepo, SellerService sellerRepo, IOptions<JwtHelper> jwt , EmailHelper emailHelper , FacebookService facebookService)
         {
             _manageRoles = manageRoles;
             _userManager = userManager;
@@ -36,7 +37,8 @@ namespace Shopify.Repository
             _sellerRepo = sellerRepo;
             _employeeRepo= employeeRepo;
             _jwt = jwt.Value;
-             _emailHelper= emailHelper; ;
+             _emailHelper= emailHelper;
+            _facebookService = facebookService;
 
 
         }
@@ -69,6 +71,76 @@ namespace Shopify.Repository
             };
 
         }
+
+
+
+        // login with facebook
+
+
+        public async Task<ResponseAuth> LoginWithFacebookAsync(string accessToken)
+        {
+            var validTokenResult =await _facebookService.ValidateAccessTokenAsync(accessToken);
+            if (validTokenResult==null)
+                return new ResponseAuth() { Message = "Not Valid", IsAuthenticated = false };
+            else
+            {
+               var userInfo  = await _facebookService.GetUserDataAsync(accessToken);
+                 var user        =  await  _userManager.FindByEmailAsync(userInfo.email);
+                if (user != null)
+                {
+                    var token = await CreateJwtToken(user);
+                    return new ResponseAuth
+                    {
+                        Email = user.Email,
+                        UserName = user.UserName,
+                        Role = "Customer",
+                        Token = new JwtSecurityTokenHandler().WriteToken(token),
+                        ExpireDate = token.ValidTo,
+                        IsAuthenticated = true
+
+                    };
+
+
+                }
+                else
+                {
+                    string username = userInfo.email.Split('@')[0];
+                    ApplicationUser newUser = new ApplicationUser()
+                    {
+                       Fname = userInfo.first_name,
+                        Lname = userInfo.last_name,
+                        Email = userInfo.email,
+                        UserName = username,
+                        Address = "Mansoura",  // will be edit
+                        SecurityStamp = Guid.NewGuid().ToString()
+                    };
+                    var result = await _userManager.CreateAsync(newUser);
+                    _customerRepo.AddCustomerId(newUser.Id);
+
+                    await _manageRoles.AddToCustomerRole(newUser);
+
+                    var token = await CreateJwtToken(newUser);
+                    return new ResponseAuth
+                    {
+                        Email = newUser.Email,
+                        UserName = newUser.UserName,
+                        Role = "Customer",
+                        Token = new JwtSecurityTokenHandler().WriteToken(token),
+                        ExpireDate = token.ValidTo,
+                        IsAuthenticated = true
+
+                    };
+                }
+            }
+
+
+
+         }
+
+
+
+
+
 
         public async Task<ResponseAuth> RegisterCustomerAsync(RegisterModel model)
         {
