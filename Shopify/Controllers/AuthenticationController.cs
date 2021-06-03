@@ -173,11 +173,28 @@ namespace Shopify.Controllers
             }
             return BadRequest(ModelState);
         }
-        
-      
-            
-        
 
+
+
+
+
+
+        // login google 
+        [HttpPost("login-google")]
+        public async Task<IActionResult> LoginGoogle([FromBody] GoogleLoginModel Data)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var result = await _authentication.LoginWithGoogleAsync(Data.payload);
+                if (!result.IsAuthenticated)
+
+                    return BadRequest(result.Message);
+
+                return Ok(result);
+            }
+            return BadRequest(ModelState);
+        }
 
 
 

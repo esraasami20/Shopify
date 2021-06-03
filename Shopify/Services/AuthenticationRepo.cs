@@ -15,6 +15,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static Google.Apis.Auth.GoogleJsonWebSignature;
 
 namespace Shopify.Repository
 {
@@ -137,6 +138,64 @@ namespace Shopify.Repository
 
          }
 
+
+
+
+        // login with google 
+
+
+
+
+
+
+        public async Task<ResponseAuth> LoginWithGoogleAsync(Payload payload)
+        {
+            var user = await _userManager.FindByEmailAsync(payload.Email);
+            if (user == null)
+            {
+                string username = payload.Email.Split('@')[0];
+                ApplicationUser newUser = new ApplicationUser()
+                {
+
+                    Fname = payload.Name,
+                    Lname = payload.FamilyName,
+                    Email = payload.Email,
+                    UserName = username,
+                    Address = "mansoura"  // will be edit
+                };
+                var result = await _userManager.CreateAsync(newUser);
+                _customerRepo.AddCustomerId(newUser.Id);
+
+                await _manageRoles.AddToCustomerRole(newUser);
+
+                var token = await CreateJwtToken(newUser);
+                return new ResponseAuth
+                {
+                    Email = newUser.Email,
+                    UserName = newUser.UserName,
+                    Role = "Customer",
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    ExpireDate = token.ValidTo,
+                    IsAuthenticated = true
+
+                };
+            }
+
+            else
+            {
+                var token = await CreateJwtToken(user);
+                return new ResponseAuth
+                {
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    Role = "Customer",
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    ExpireDate = token.ValidTo,
+                    IsAuthenticated = true
+
+                };
+            }
+        }
 
 
 
