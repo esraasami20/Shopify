@@ -12,9 +12,8 @@ namespace Shopify.Models
     {
         
         public int CartId { get; set; }
-        [Required]
         public float Cost { get; set; }
-        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public DateTime OrderDate { get; set; } 
         public DateTime ShippingDate { get; set; }
         public DateTime DueDate { get; set; }
 
@@ -41,9 +40,9 @@ namespace Shopify.Models
         public virtual Status Status { get; set; }
 
 
-        [ForeignKey("ShippingDetail")]
-        public int? ShippingDetailId { get; set; }
-        public virtual ShippingDetail ShippingDetail { get; set; }
+        //[ForeignKey("ShippingDetail")]
+        //public int? ShippingDetailId { get; set; }
+        //public virtual ShippingDetail ShippingDetail { get; set; }
 
 
 
