@@ -50,9 +50,10 @@ namespace Shopify.Controllers
         }
 
 
-        // add category
+        // add sub category
         [HttpPost("{id}")]
-        public async Task<ActionResult<SubCategory>> AddCategoryAsync(int id,[FromForm] SubCategory subCategory, [FromForm] IFormFile file)
+
+        public async Task<ActionResult<SubCategory>> AddSubCategoryAsync(int id, [FromForm] SubCategory subCategory, IFormFile file) // not swagger [from form]
         {
 
             if (!ModelState.IsValid)
@@ -62,20 +63,23 @@ namespace Shopify.Controllers
             else
             {
                 subCategory.CategoryId = id;
-                SubCategory result = await _subCategoryRepo.AddSubCategoryAsync(  subCategory, file);
+                SubCategory result = await _subCategoryRepo.AddSubCategoryAsync(subCategory, file);
                 if (result == null)
-                
-                    return NotFound(new Response { Status="Error",Message="This Categoty Not Found" });
-                
+
+                    return NotFound(new Response { Status = "Error", Message = "This Categoty Not Found" });
+
                 return Ok(result);
             }
 
         }
 
 
+
+
+
         //edit sub category
         [HttpPut("{id}")]
-        public async Task<ActionResult<Category>> EditSubCategoryAsync(int id, [FromForm] SubCategory subCategory, [FromForm] IFormFile file)
+        public async Task<ActionResult> EditSubCategoryAsync(int id, [FromForm] SubCategory subCategory, IFormFile file)// not swagger [from form]
         {
 
             if (!ModelState.IsValid)
@@ -84,7 +88,7 @@ namespace Shopify.Controllers
             }
             else
             {
-                subCategory.SubCategoryId= id;
+                subCategory.SubCategoryId = id;
                 var result = await _subCategoryRepo.EditSubCategoryAsync(subCategory, file);
                 if (result != null)
                     return NoContent();

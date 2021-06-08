@@ -38,7 +38,7 @@ namespace Shopify.Controllers
 
         // get Inventory by id
         [HttpGet("{id}")]
-        public ActionResult<Inventory> GetCategory(int id)
+        public ActionResult<Inventory> GetInventory(int id)
         {
             var result = _inventoryRepo.GetInventoryById(id , User.Identity);
             if (result == null)
@@ -67,7 +67,7 @@ namespace Shopify.Controllers
 
         //edit Inventory
         [HttpPut("{id}")]
-        public async Task<ActionResult<Inventory>> AddInventoryAsync(int id, [FromBody] Inventory inventory)
+        public  ActionResult EditInventoryAsync(int id, [FromBody] Inventory inventory)
         {
 
             if (!ModelState.IsValid)
@@ -88,7 +88,7 @@ namespace Shopify.Controllers
 
         //delete inventory
        [HttpDelete("{id}")]
-        public ActionResult<Inventory> deleteInventory(int id)
+        public ActionResult<Inventory> DeleteInventory(int id)
         {
             var result = _inventoryRepo.DeleteInventory(id ,User.Identity);
             if (result != null)

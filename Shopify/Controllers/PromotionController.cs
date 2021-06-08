@@ -44,7 +44,7 @@ namespace Shopify.Controllers
 
         // add promotion
         [HttpPost]
-        public ActionResult<Promotions> AddCategoryAsync([FromBody] Promotions promotion)
+        public ActionResult<Promotions> AddPromotionAsync([FromBody] Promotions promotion)
         {
 
             if (!ModelState.IsValid)
@@ -77,7 +77,7 @@ namespace Shopify.Controllers
 
         //edit Promotions
         [HttpPut("{id}")]
-        public  ActionResult AddCategoryAsync(int id, [FromBody] Promotions promotion)
+        public  ActionResult EditPoromothionAsync(int id, [FromBody] Promotions promotion)
         {
 
             if (!ModelState.IsValid)

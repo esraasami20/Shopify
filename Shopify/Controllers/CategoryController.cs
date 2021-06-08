@@ -48,8 +48,8 @@ namespace Shopify.Controllers
 
         // add category
         [HttpPost]
-       
-        public async Task<ActionResult<Category>> AddCategoryAsync([FromForm]Category category, [FromForm] IFormFile file)
+
+        public async Task<ActionResult<Category>> AddCategoryAsync([FromForm] Category category,  IFormFile file)// not swagger [from form]
         {
             if (!ModelState.IsValid)
             {
@@ -58,16 +58,16 @@ namespace Shopify.Controllers
             else
             {
                 Category result = await _categoryRepo.AddCategory(category, file);
-                
+
                 return Ok(result);
             }
-           
+
         }
 
 
         //edit category
         [HttpPut("{id}")]
-        public async Task<ActionResult<Category>> AddCategoryAsync(int id,[FromForm] Category category, [FromForm] IFormFile file)
+        public async Task<ActionResult<Category>> EditCategoryAsync(int id, [FromForm] Category category,  IFormFile file)// not swagger [from form]
         {
 
             if (!ModelState.IsValid)
@@ -78,9 +78,9 @@ namespace Shopify.Controllers
             {
                 category.CategoryId = id;
                 var result = await _categoryRepo.EditCategoryAsync(category, file);
-                if (result!=null)
-                return NoContent();
-               return NotFound();
+                if (result != null)
+                    return NoContent();
+                return NotFound();
             }
 
         }

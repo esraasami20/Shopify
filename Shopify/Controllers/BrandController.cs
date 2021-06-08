@@ -53,7 +53,7 @@ namespace Shopify.Controllers
 
         // add brand
         [HttpPost]
-        public ActionResult<Brand> AddCategory([FromBody] Brand brand)
+        public ActionResult<Brand> AddBrand([FromBody] Brand brand)
         {
 
             if (!ModelState.IsValid)
@@ -94,7 +94,7 @@ namespace Shopify.Controllers
 
         // delete category
         [HttpDelete("{id}")]
-        public ActionResult deleteCategory(int id)
+        public ActionResult deleteBrand(int id)
         {
 
 
