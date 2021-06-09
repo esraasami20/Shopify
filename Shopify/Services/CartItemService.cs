@@ -124,22 +124,26 @@ namespace Shopify.Services
             Product product = GetProduct(cartItem.ProductId);
             if (cartItemFound!=null)
             {
-                product.QuantitySealed += cartItem.Quantity - cartItemFound.Quantity;
                 if (cartItem.Quantity <=(cartItemFound.Quantity + product.InventoryProducts.FirstOrDefault(i => i.ProductId == product.ProductId).Quantity))
                 {
                     if (cartItemFound.Quantity > cartItem.Quantity)
                     {
                          product.InventoryProducts.FirstOrDefault(i => i.ProductId == product.ProductId).Quantity += ( cartItemFound.Quantity - cartItem.Quantity);
                         _db.Carts.FirstOrDefault(c => c.CartId == cartItemFound.CartId).Cost -= (cartItemFound.Quantity - cartItem.Quantity) * product.Price;
+                        product.QuantitySealed += cartItem.Quantity - cartItemFound.Quantity;
+
                     }
                     else
                     {
-                        product.InventoryProducts.FirstOrDefault(i => i.ProductId == product.ProductId).Quantity -= product.QuantitySealed ;
+                        product.InventoryProducts.FirstOrDefault(i => i.ProductId == product.ProductId).Quantity += product.QuantitySealed ;
                         _db.Carts.FirstOrDefault(c => c.CartId == cartItemFound.CartId).Cost += ( cartItem.Quantity - cartItemFound.Quantity) * product.Price;
+                        product.QuantitySealed += cartItem.Quantity - cartItemFound.Quantity;
+                        product.InventoryProducts.FirstOrDefault(i => i.ProductId == product.ProductId).Quantity -= product.QuantitySealed;
+
 
                     }
-                   // product.QuantitySealed +=   _db.CartItems.Where(p => p.ProductId == product.ProductId).Select(s => s.Quantity).Sum() ;
-                    product.QuantitySealed +=  cartItem.Quantity - cartItemFound.Quantity;
+                    // product.QuantitySealed +=   _db.CartItems.Where(p => p.ProductId == product.ProductId).Select(s => s.Quantity).Sum() ;
+                   // product.QuantitySealed +=  cartItem.Quantity - cartItemFound.Quantity;
                     cartItemFound.Quantity = cartItem.Quantity;
                     cartItemFound.TotalPrice = cartItem.Quantity * product.Price;
                     _db.SaveChanges();
