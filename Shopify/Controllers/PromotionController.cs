@@ -29,6 +29,8 @@ namespace Shopify.Controllers
         }
 
 
+
+
         //get promotion by id
         [HttpGet("{id}")]
         public ActionResult<Promotions> GetPromotion(int id)
@@ -49,7 +51,7 @@ namespace Shopify.Controllers
 
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
             else
             {
@@ -62,7 +64,7 @@ namespace Shopify.Controllers
 
 
         // add pormotion to product 
-        [HttpPost("a/{PormotionId}")]
+        [HttpPost("{PormotionId}")]
         public ActionResult AddPromotionToProduct(int PormotionId, [FromBody]int ProductId)
         {
             var result = _promotionRepo.AddPromotionToProduct(PormotionId, ProductId, User.Identity);
@@ -82,7 +84,7 @@ namespace Shopify.Controllers
 
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
             else
             {

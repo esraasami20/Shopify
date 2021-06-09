@@ -19,6 +19,24 @@ namespace Shopify.Models
         [Required]
         public string Description { get; set; } 
         //public string Image { get; set; }
+
+        
+        [Required]
+        public  DateTime StartDate { get; set; }
+        
+        [Required]
+        public  DateTime EndDate { get; set; }
+
+        [DefaultValue(false)]
+        public bool Status { get; set; }
+        
+        [Required]
+        public string StatusControlled { get; set; }
+
+
+
+
+
         [DefaultValue(false)]
         public bool Isdeleted { get; set; }
 

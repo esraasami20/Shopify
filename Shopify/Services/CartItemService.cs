@@ -172,9 +172,6 @@ namespace Shopify.Services
                         cartItem.Isdeleted = true;
                         _db.InventoryProducts.FirstOrDefault(i => i.ProductId == cartItem.ProductId).Quantity += cartItem.Quantity;
                         _db.Products.FirstOrDefault(i => i.ProductId == cartItem.ProductId).QuantitySealed -= cartItem.Quantity;
-
-
-
                         _db.SaveChanges();
                         return new Response { Status = "Success", data = cartItem };
                     }
