@@ -133,11 +133,12 @@ namespace Shopify.Services
                     }
                     else
                     {
-                        product.InventoryProducts.FirstOrDefault(i => i.ProductId == product.ProductId).Quantity += (product.QuantitySealed - cartItem.Quantity);
+                        product.InventoryProducts.FirstOrDefault(i => i.ProductId == product.ProductId).Quantity -= (product.QuantitySealed - cartItem.Quantity);
                         _db.Carts.FirstOrDefault(c => c.CartId == cartItemFound.CartId).Cost += ( cartItem.Quantity - cartItemFound.Quantity) * product.Price;
 
                     }
-                    product.QuantitySealed = cartItem.Quantity;
+                   // product.QuantitySealed +=   _db.CartItems.Where(p => p.ProductId == product.ProductId).Select(s => s.Quantity).Sum() ;
+                    product.QuantitySealed +=  cartItem.Quantity - cartItemFound.Quantity;
                     cartItemFound.Quantity = cartItem.Quantity;
                     cartItemFound.TotalPrice = cartItem.Quantity * product.Price;
                     _db.SaveChanges();
