@@ -87,10 +87,8 @@ namespace Shopify.Controllers
             var result =  _cartItemService.DeleteCartItemAsync(id,User.Identity);
             if (result.Status == "Success")
                 return NoContent();
-            else if (result.Status == "Error")
-                return NotFound(result.Message);
-            else
-                return BadRequest(result.Message);
+              return NotFound(result.Message);
+           
         }
 
     }
