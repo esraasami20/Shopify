@@ -158,30 +158,37 @@ namespace Shopify.Services
 
 
         /// delete cart item 
-        public CartItem DeleteCartItemAsync(int cartItemId)
+        public Response DeleteCartItemAsync(int cartItemId , IIdentity customer)
         {
-            var cartItem = _db.CartItems.Include(i=>i.Cart).FirstOrDefault(i=>i.CartItemId == cartItemId && i.Isdeleted == false);
-            if(cartItem != null && cartItem.Cart.CartItems.Count() > 1)
+            var cartItems = _db.Carts.Include(c => c.CartItems).Where(c => c.CustomerID == HelperMethods.GetAuthnticatedUserId(customer) && c.Isdeleted == false && c.Approved == false).Select(c => c.CartItems).FirstOrDefault();
+            var cartItemFound = cartItems.FirstOrDefault(c => c.CartItemId == cartItemId && c.Isdeleted == false);
+            if (cartItemFound != null)
             {
-                 cartItem.Isdeleted = true;
-                _db.InventoryProducts.FirstOrDefault(i=>i.ProductId  == cartItem.ProductId).Quantity += cartItem.Quantity;
-                _db.Products.FirstOrDefault(i => i.ProductId == cartItem.ProductId).QuantitySealed -= cartItem.Quantity;
-                
+                var cartItem = _db.CartItems.Include(i => i.Cart).FirstOrDefault(i => i.CartItemId == cartItemId && i.Isdeleted == false);
+                if (cartItem != null && cartItem.Cart.CartItems.Count() > 1)
+                {
+                    cartItem.Isdeleted = true;
+                    _db.InventoryProducts.FirstOrDefault(i => i.ProductId == cartItem.ProductId).Quantity += cartItem.Quantity;
+                    _db.Products.FirstOrDefault(i => i.ProductId == cartItem.ProductId).QuantitySealed -= cartItem.Quantity;
 
 
-                _db.SaveChanges();
-                return cartItem;
+
+                    _db.SaveChanges();
+                    return  new Response{Status="Success" , data = cartItem };
+                }
+                if (cartItem != null && cartItem.Cart.CartItems.Count() == 1)
+                {
+                    cartItem.Isdeleted = true;
+                    cartItem.Cart.Isdeleted = true;
+                    _db.InventoryProducts.FirstOrDefault(i => i.ProductId == cartItem.ProductId).Quantity += cartItem.Quantity;
+                    _db.Products.FirstOrDefault(i => i.ProductId == cartItem.ProductId).QuantitySealed -= cartItem.Quantity;
+                    _db.SaveChanges();
+                    return new Response { Status = "Success", data = cartItem };
+                }
+                    return new Response { Status = "Error", Message = "Not items" };
+
             }
-            if (cartItem != null && cartItem.Cart.CartItems.Count() ==1)
-            {
-                cartItem.Isdeleted = true;
-                cartItem.Cart.Isdeleted = true;
-                _db.InventoryProducts.FirstOrDefault(i => i.ProductId == cartItem.ProductId).Quantity += cartItem.Quantity;
-                _db.Products.FirstOrDefault(i => i.ProductId == cartItem.ProductId).QuantitySealed -= cartItem.Quantity;
-                _db.SaveChanges();
-                return cartItem;
-            }
-            return null;
+            return new Response { Status="Error2" , Message="This Not Allow" };
         }
 
     }
