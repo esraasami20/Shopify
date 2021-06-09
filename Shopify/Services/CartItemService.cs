@@ -124,6 +124,7 @@ namespace Shopify.Services
             Product product = GetProduct(cartItem.ProductId);
             if (cartItemFound!=null)
             {
+                product.QuantitySealed += cartItem.Quantity - cartItemFound.Quantity;
                 if (cartItem.Quantity <=(cartItemFound.Quantity + product.InventoryProducts.FirstOrDefault(i => i.ProductId == product.ProductId).Quantity))
                 {
                     if (cartItemFound.Quantity > cartItem.Quantity)
@@ -133,7 +134,7 @@ namespace Shopify.Services
                     }
                     else
                     {
-                        product.InventoryProducts.FirstOrDefault(i => i.ProductId == product.ProductId).Quantity -= (product.QuantitySealed - cartItem.Quantity);
+                        product.InventoryProducts.FirstOrDefault(i => i.ProductId == product.ProductId).Quantity -= product.QuantitySealed ;
                         _db.Carts.FirstOrDefault(c => c.CartId == cartItemFound.CartId).Cost += ( cartItem.Quantity - cartItemFound.Quantity) * product.Price;
 
                     }
