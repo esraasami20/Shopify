@@ -6,6 +6,7 @@ using Shopify.Models;
 using Shopify.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
@@ -112,7 +113,76 @@ namespace Shopify.Repository.Interfaces
             return true;
         }
 
+        public Response EditProductDataAsync(Product product , IIdentity seller)
+        {
+            var sellerId =  HelperMethods.GetAuthnticatedUserId(seller);
+            List<Inventory> inventories = _db.Inventories.Include(ip=>ip.InventoryProducts).Where(i => i.sellerId == sellerId && i.Isdeleted==false).ToList();
+            if (inventories != null) { 
+            Product ProductFound = null;
+                foreach (var inventory in inventories)
+                {
+                    var InventoryProduct = inventory.InventoryProducts.Where(p => p.ProductId == product.ProductId && p.Isdeleted == false).FirstOrDefault();
+                    ProductFound = _db.InventoryProducts.Include(p => p.Product).FirstOrDefault(p => p.ProductId == product.ProductId).Product;
+                    if (ProductFound != null)
+                    {
+                        ProductFound.ProductName = product.ProductName;
+                        ProductFound.Price = product.Price;
+                        ProductFound.Description = product.Description;
+                        ProductFound.Details = product.Details;
+                        ProductFound.Discount = product.Discount;
+                        ProductFound.Size = product.Size;
+                        ProductFound.Color = product.Color;
+                        ProductFound.Brand = product.Brand;
+                        ProductFound.SubCategotyId = product.SubCategotyId;
+                        _db.SaveChanges();
+                        return new Response { Status = "Success", Message = "Product update successfully", data = ProductFound };
 
+                    }
+                    return new Response { Status = "Error", Message = "Product Not Found", data = ProductFound };
+
+                }
+            }
+
+            return new Response { Status = "Error", Message = "Inventory Not Found" };
+           
+        }
+
+        public async Task<Response> EditProductImagesAsync(int id,IFormFile [] files, IIdentity seller)
+        {
+            var sellerId = HelperMethods.GetAuthnticatedUserId(seller);
+            List<Inventory> inventories = _db.Inventories.Include(ip => ip.InventoryProducts).Where(i => i.sellerId == sellerId && i.Isdeleted == false).ToList();
+            if (inventories != null)
+            {
+                Product ProductFound = null;
+                foreach (var inventory in inventories)
+                {
+                    var InventoryProduct = inventory.InventoryProducts.Where(p => p.ProductId == id && p.Isdeleted == false).FirstOrDefault();
+                    ProductFound = _db.InventoryProducts.Include(p => p.Product).ThenInclude(i=>i.ProductImages).FirstOrDefault(p => p.ProductId ==id).Product;
+                    if (ProductFound != null)
+                    {
+                        // delete old image
+                        for (int i = 0; i < ProductFound.ProductImages.Count; i++)
+                        {
+                            File.Delete(ProductFound.ProductImages[i].Image);
+                        }
+
+                        // create new image
+                        List<string> pathes = await FileHelper.SaveImagesAsync(id, files, "Products");
+                        for (int i = 0; i < pathes.Count; i++)
+                        {
+                            ProductFound.ProductImages[i].Image = pathes[i];
+                        }
+                        _db.SaveChanges();
+                        return new Response { Status = "Success", Message = "Product images update successfully", data = ProductFound.ProductImages };
+
+                    }
+                    return new Response { Status = "Error", Message = "Product Not Found", data = ProductFound };
+
+                }
+            }
+
+            return new Response { Status = "Error", Message = "Inventory Not Found" };
+        }
 
         public List<Product>  GetTopSeales()
         {

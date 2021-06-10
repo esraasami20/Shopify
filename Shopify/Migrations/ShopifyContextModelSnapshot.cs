@@ -541,8 +541,18 @@ namespace Shopify.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<float?>("Discount")
-                        .HasColumnType("real");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasMaxLength(10000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Discount")
+                        .HasColumnType("float");
 
                     b.Property<bool>("IsdeletedBySeller")
                         .HasColumnType("bit");
@@ -563,6 +573,9 @@ namespace Shopify.Migrations
 
                     b.Property<int>("QuantitySealed")
                         .HasColumnType("int");
+
+                    b.Property<string>("RangeDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Size")
                         .IsRequired()

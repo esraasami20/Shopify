@@ -57,23 +57,23 @@ namespace Shopify.Controllers
 
 
 
-        // add product details
+        //// add product details
 
-        [HttpPost("add-details/{productId}/{InventoryId}")]
-        [Authorize(Roles = "Seller")]
+        //[HttpPost("add-details/{productId}/{InventoryId}")]
+        //[Authorize(Roles = "Seller")]
 
-        public ActionResult AddProductDetails(int productId, int InventoryId, ProductDetail[] productDetails)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = _productRepo.AddProdctDetails(productId, InventoryId, productDetails, User.Identity);
-                if (result.Status == "Success")
-                    return Ok(new Response { Status = "Success", Message = "Dtails Added successfully" });
-                return NotFound();
-            }
-            return BadRequest(ModelState);
+        //public ActionResult AddProductDetails(int productId, int InventoryId, ProductDetail[] productDetails)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var result = _productRepo.AddProdctDetails(productId, InventoryId, productDetails, User.Identity);
+        //        if (result.Status == "Success")
+        //            return Ok(new Response { Status = "Success", Message = "Dtails Added successfully" });
+        //        return NotFound();
+        //    }
+        //    return BadRequest(ModelState);
 
-        }
+        //}
 
 
 
@@ -139,6 +139,54 @@ namespace Shopify.Controllers
         //    }
 
         //}
+
+
+
+        // edit Product data
+        [Authorize(Roles = "Seller")]
+        [HttpPut("{id}")]
+        public ActionResult EditProduct(int id, [FromBody] Product product)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                product.ProductId = id;
+                var result = _productRepo.EditProductDataAsync(product , User.Identity);
+                if (result.Status == "Error"|| result.Status == "Error" && result.data ==null)
+                     return NotFound();
+                    return NoContent();
+               
+            }
+
+        }
+
+
+
+        // edit Product images
+        [Authorize(Roles = "Seller")]
+        [HttpPut("images/{id}")]
+        public async Task<ActionResult> EditProductImagesAsync(int id, [FromForm] IFormFile [] files)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            else
+            {
+               
+                var result =await _productRepo.EditProductImagesAsync(id,files, User.Identity);
+                if (result.Status == "Error" || result.Status == "Error" && result.data == null)
+                    return NotFound();
+                return NoContent();
+
+            }
+
+        }
 
 
 

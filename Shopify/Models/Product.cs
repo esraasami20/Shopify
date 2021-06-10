@@ -20,7 +20,23 @@ namespace Shopify.Models
         [Range(5,maximum:100000)]
         public float Price { get; set; }
 
-        public float ?Discount { get; set; }    
+        
+        /// <summary>   start  update one   /// </summary>
+       
+        public double? Discount { get; set; }    
+
+        public string RangeDate { get; set; }  
+
+        [Required]
+        [StringLength(maximumLength:1000 , MinimumLength =50)]
+        public string Description { get; set; }
+
+
+        [Required]
+        [StringLength(maximumLength: 10000, MinimumLength = 50)]   
+        public string Details { get; set; }  // stored as html
+        /// <summary>   end update one   /// </summary>
+
 
         [Required]
         [StringLength(50, MinimumLength = 2)]
