@@ -133,6 +133,7 @@ namespace Shopify.Repository.Interfaces
                         ProductFound.Size = product.Size;
                         ProductFound.Color = product.Color;
                         ProductFound.Brand = product.Brand;
+                        ProductFound.Manufacture = product.Manufacture;
                         ProductFound.SubCategotyId = product.SubCategotyId;
                         _db.SaveChanges();
                         return new Response { Status = "Success", Message = "Product update successfully", data = ProductFound };

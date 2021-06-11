@@ -35,6 +35,11 @@ namespace Shopify.Models
         [Required]
         [StringLength(maximumLength: 10000, MinimumLength = 50)]   
         public string Details { get; set; }  // stored as html
+
+
+        [Required]
+        [StringLength(maximumLength: 20, MinimumLength = 3)]
+        public string Manufacture { get; set; }
         /// <summary>   end update one   /// </summary>
 
 
