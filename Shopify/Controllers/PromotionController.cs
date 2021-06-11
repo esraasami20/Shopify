@@ -22,10 +22,14 @@ namespace Shopify.Controllers
         {
             _promotionRepo = promotionRepo;
         }
+
+
+
+        // get all seller's promotions
         [HttpGet]
         public ActionResult<List<Promotions>> GetAll()
         {
-            return _promotionRepo.GetAllPromotions();
+            return _promotionRepo.GetAllPromotions(User.Identity);
         }
 
 
@@ -35,7 +39,7 @@ namespace Shopify.Controllers
         [HttpGet("{id}")]
         public ActionResult<Promotions> GetPromotion(int id)
         {
-            var result = _promotionRepo.GetPromotion(id);
+            var result = _promotionRepo.GetPromotion(id , User.Identity);
             if (result == null)
                 return NotFound();
             return Ok(result);
@@ -46,7 +50,7 @@ namespace Shopify.Controllers
 
         // add promotion
         [HttpPost]
-        public ActionResult<Promotions> AddPromotionAsync([FromBody] Promotions promotion)
+        public async Task<ActionResult<Promotions>> AddPromotionAsync([FromForm] Promotions promotion ,IFormFile file)
         {
 
             if (!ModelState.IsValid)
@@ -55,7 +59,7 @@ namespace Shopify.Controllers
             }
             else
             {
-                Promotions result =  _promotionRepo.addPromotion(promotion, User.Identity);
+                Promotions result =await  _promotionRepo.addPromotionAsync(promotion,file, User.Identity);
 
                 return Ok(result);
             }
@@ -79,7 +83,7 @@ namespace Shopify.Controllers
 
         //edit Promotions
         [HttpPut("{id}")]
-        public  ActionResult EditPoromothionAsync(int id, [FromBody] Promotions promotion)
+        public async Task<ActionResult> EditPoromothionAsync(int id, [FromForm] Promotions promotion , IFormFile file)
         {
 
             if (!ModelState.IsValid)
@@ -89,7 +93,7 @@ namespace Shopify.Controllers
             else
             {
                 promotion.PromotionsId = id;
-                var result =  _promotionRepo.EditPromotionAsync(promotion , User.Identity);
+                var result = await _promotionRepo.EditPromotionAsync(promotion , file, User.Identity);
                 if (result)
                     return NoContent();
                 return NotFound();

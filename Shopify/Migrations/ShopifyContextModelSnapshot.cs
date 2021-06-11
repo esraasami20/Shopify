@@ -668,6 +668,9 @@ namespace Shopify.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("Isdeleted")
                         .HasColumnType("bit");
 
@@ -682,7 +685,8 @@ namespace Shopify.Migrations
 
                     b.Property<string>("StatusControlled")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("PromotionsId");
 

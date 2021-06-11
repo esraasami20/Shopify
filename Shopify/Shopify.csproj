@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Files\Images\Categories\" />
+    <Folder Include="Files\Images\Promotion\" />
     <Folder Include="Files\Images\Products\" />
     <Folder Include="Files\Images\SubCategories\" />
     <Folder Include="Files\sellers\Id\" />

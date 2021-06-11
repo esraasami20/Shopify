@@ -13,12 +13,12 @@ namespace Shopify.Models
 
         public int PromotionsId { get; set; }     
 
-        [Range(0,100)]
+        [Range(1,100)]
         [Required]
         public float Discount { get; set; } // in precentage
         [Required]
         public string Description { get; set; } 
-        //public string Image { get; set; }
+        public string Image { get; set; }
 
         
         [Required]
@@ -31,7 +31,8 @@ namespace Shopify.Models
         public bool Status { get; set; }
         
         [Required]
-        public string StatusControlled { get; set; }
+        [StringLength(30,MinimumLength =3)]
+        public string StatusControlled { get; set; } 
 
 
 

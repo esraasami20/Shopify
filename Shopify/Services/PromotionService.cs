@@ -19,25 +19,35 @@ namespace Shopify.Repository.Interfaces
             _db = db;
         }
 
-        // get all promotions
-        public List<Promotions> GetAllPromotions()
+        // get all promotions for seller
+        public List<Promotions> GetAllPromotions(IIdentity seller)
         {
-            return _db.Promotions.Where(c => c.Isdeleted == false).ToList();
+            var sellerId = HelperMethods.GetAuthnticatedUserId(seller);
+            return _db.Promotions.Where(c => c.SellerId==sellerId && c.Isdeleted == false).ToList();
         }
 
-        // get promotions by id
-        public Promotions GetPromotion(int id)
+        // get promotions by id for seller
+        public Promotions GetPromotion(int id, IIdentity seller)
         {
-            Promotions promotion = _db.Promotions.Include("Seller").SingleOrDefault(c => c.PromotionsId == id && c.Isdeleted == false);
+
+            var sellerId = HelperMethods.GetAuthnticatedUserId(seller);
+            Promotions promotion = _db.Promotions.Include("Seller").SingleOrDefault(c => c.PromotionsId == id &&c.SellerId == sellerId&& c.Isdeleted == false);
             return promotion;
         }
 
-        // add Promotions
-        public Promotions addPromotion(Promotions promotion, IIdentity seller)
+        // add Promotions by seller
+        public async Task<Promotions> addPromotionAsync(Promotions promotion,IFormFile file, IIdentity seller)
         {
               var sellerId =  HelperMethods.GetAuthnticatedUserId(seller);
               promotion.SellerId = sellerId;
              _db.Promotions.Add(promotion);
+            _db.SaveChanges();
+
+            if (file != null)
+             {
+              string path= await  FileHelper.SaveImageAsync(promotion.PromotionsId, file, "Promotion");
+              promotion.Image = path;
+             }
              _db.SaveChanges();
              
             return promotion;
@@ -59,7 +69,7 @@ namespace Shopify.Repository.Interfaces
             return null;
         }
 
-        public bool EditPromotionAsync(Promotions promotion , IIdentity seller)
+        public async Task<bool> EditPromotionAsync(Promotions promotion, IFormFile file, IIdentity seller)
         {
             var sellerId = HelperMethods.GetAuthnticatedUserId(seller);
             Promotions promotion1  = _db.Promotions.FirstOrDefault(p => p.PromotionsId == promotion.PromotionsId && p.SellerId == sellerId && p.Isdeleted == false);
@@ -68,6 +78,20 @@ namespace Shopify.Repository.Interfaces
             {
                 promotion1.Description = promotion.Description;
                 promotion1.Discount = promotion.Discount;
+                promotion1.StartDate = promotion.StartDate;
+                promotion1.EndDate = promotion.EndDate;
+                promotion1.Status = promotion.Status;
+                promotion1.StatusControlled = promotion.StatusControlled;
+              
+
+                if (file != null)
+                {
+                    // delete old image
+                    File.Delete(promotion1.Image);
+                    // add new image
+                    promotion1.Image = await FileHelper.SaveImageAsync(promotion.PromotionsId, file, "Promotion");
+                  
+                }
                 _db.SaveChanges();
                 return true;
             }
