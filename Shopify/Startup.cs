@@ -129,6 +129,7 @@ namespace Shopify
             services.AddScoped<CartItemService>();
             services.AddScoped<FacebookService>();
             services.AddScoped<FacebookSettings>();
+            services.AddScoped<ReviewService>();
             services.AddHttpClient();
             
 
