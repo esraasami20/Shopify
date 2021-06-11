@@ -21,7 +21,7 @@ namespace Shopify.Repository.Interfaces
         // get all categories
         public List<Category> GetAllCategories()
         {
-            return _db.Categories.Where(c=>c.Isdeleted==false).ToList();
+            return _db.Categories.Include(s=>s.SubCategories).Where(c=>c.Isdeleted==false).ToList();
         }
 
         // get category by id
