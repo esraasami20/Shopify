@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shopify.Helper;
 using Shopify.Models;
 using Shopify.Services;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Shopify.Controllers
 {
-    [Authorize(Roles = "Seller")]
+    [Authorize(Roles = "Customer")]
     [Route("api/[controller]")]
     [ApiController]
     public class ReviewController : ControllerBase
@@ -22,29 +23,47 @@ namespace Shopify.Controllers
         {
             _reviewService = reviewService;
         }
+
         //get all reviews
         [HttpGet]
-        public ActionResult<List<Review>> getAll()
+        public ActionResult<List<Review>> GetAll()
         {
             return Ok(_reviewService.GetReviews());
         }
+
+
         //get all reviews for spicific product
         [HttpGet("{id}")]
         public ActionResult<List<Review>> getspicificReview(int id)
         {
-            return Ok(_reviewService.GetReviewForSpicificProduct(id));
+            Response reault = _reviewService.GetReviewForSpicificProduct(id);
+             if(reault.Status=="Success")
+               return Ok(reault.data);
+            return NotFound();
         }
+
+
+
         // get all review for spicific customer
         [HttpGet]
         [Route("customer-review/{id}")]
         public ActionResult<List<Review>> getcustumersReview(int id)
         {
-            return Ok(_reviewService.GetReviewForCustomer(id, User.Identity));
+
+            Response reault = _reviewService.GetReviewForCustomer(id, User.Identity);
+            if (reault.Status == "Success")
+                return Ok(reault.data);
+            return NotFound();
+
+           
         }
+
+
+
 
         //Edit Review
         [HttpPut("{id}")]
-        public async Task<ActionResult<Review>> editReview(int id, [FromBody] Review review)
+        public  ActionResult EditReview(int id, [FromBody] Review review)
         {
             if (!ModelState.IsValid)
             {
@@ -52,29 +71,40 @@ namespace Shopify.Controllers
             }
             else
             {
-                var result = await _reviewService.editReview(id, User.Identity, review);
+                review.ProductId = id;
+                var result =  _reviewService.EditReview( User.Identity, review);
                 if (result)
                     return NoContent();
                 return NotFound();
             }
         }
+
+
+
         //add review
         [HttpPost("{ProductId}")]
         public ActionResult AddReviewToProduct(int ProductId, [FromBody] Review review)
         {
-            var result = _reviewService.addNewReview(ProductId, User.Identity,review);
-            if (result != null)
+            if (ModelState.IsValid)
             {
-                return Ok(result);
+                review.ProductId = ProductId;
+                var result = _reviewService.AddNewReview(User.Identity, review);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                return NotFound();
             }
-            return NotFound();
+            return BadRequest(ModelState);
         }
+
+
         // delete review
         [HttpDelete("{id}")]
         public ActionResult deletereview(int id)
         {
 
-            var result = _reviewService.deleteReview(id, User.Identity);
+            var result = _reviewService.DeleteReview(id, User.Identity);
             if (result)
                 return NoContent();
             return NotFound();

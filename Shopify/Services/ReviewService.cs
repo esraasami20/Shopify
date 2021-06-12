@@ -16,29 +16,44 @@ namespace Shopify.Services
         {
             _db = db;
         }
+
+
         //get all reviews
         public List<Review> GetReviews()
         {
-            return _db.Reviews.ToList();
+            return _db.Reviews.Where(r=>r.Isdeleted==false).ToList();
         }
+
+
         //get all reviews for spicific product
-        public List<Review> GetReviewForSpicificProduct(int id)
+        public Response GetReviewForSpicificProduct(int id)
         {
-            var product = _db.Products.FirstOrDefault(a => a.ProductId == id);
-            return _db.Reviews.Where(a => a.ProductId == product.ProductId && a.Isdeleted == false).ToList();
+            var product = _db.Products.FirstOrDefault(a => a.ProductId == id && a.IsdeletedBySeller==false);
+            if (product != null)
+                return new Response { Status = "Success", data = _db.Reviews.Where(a => a.ProductId == product.ProductId && a.Isdeleted == false).ToList() };
+            else
+                return new Response {Status="Error" , Message="Product Not Found" };
         }
+
+
         // get all review for spicific customer
-        public List<Review> GetReviewForCustomer(int id, IIdentity customer)
+        public Response GetReviewForCustomer(int id, IIdentity customer)
         {
             var customerId = HelperMethods.GetAuthnticatedUserId(customer);
-           List<Review> review = _db.Reviews.Where(a => a.ProductId == id && a.CustomerId == customerId && a.Isdeleted == false).ToList();
-            return review;
+            var product = _db.Products.FirstOrDefault(a => a.ProductId == id && a.IsdeletedBySeller == false);
+            if (product != null)
+                return new Response { Status = "Success", data = _db.Reviews.Where(a => a.ProductId == id && a.CustomerId == customerId && a.Isdeleted == false).ToList() };
+            else
+                return new Response { Status = "Error", Message = "Product Not Found" };
         }
+
+
+
         //Edit Review
-        public async Task<bool> editReview(int id, IIdentity customer, Review Newreview)
+        public bool EditReview(IIdentity customer, Review Newreview)
         {
             var customerId = HelperMethods.GetAuthnticatedUserId(customer);
-            Review review = _db.Reviews.FirstOrDefault(a => a.ProductId == id && a.CustomerId == customerId && a.Isdeleted == false);
+            Review review = _db.Reviews.FirstOrDefault(a => a.ProductId ==Newreview.ProductId && a.CustomerId == customerId && a.Isdeleted == false);
             if(Newreview != null)
             {
                 review.review = Newreview.review;
@@ -49,23 +64,31 @@ namespace Shopify.Services
             return false;
 
         }
+
+
+
+
+
         //add review
-        public Review addNewReview(int id, IIdentity customer,Review Newreview)
+        public Review AddNewReview(IIdentity customer,Review review)
         {
             var customerId = HelperMethods.GetAuthnticatedUserId(customer);
-            var product = _db.Products.FirstOrDefault(a => a.ProductId == id);
-            Review review = _db.Reviews.FirstOrDefault(p => p.ProductId == product.ProductId && p.CustomerId == customerId && p.Isdeleted == false);
-
-            if (Newreview != null && customerId!=null && product != null)
+            var product = _db.Products.FirstOrDefault(a => a.ProductId == review.ProductId);
+            if (product != null)
             {
-                _db.Reviews.Add(Newreview);
-                _db.SaveChanges();
-                return review;
+                    _db.Reviews.Add(review);
+                    _db.SaveChanges();
+                    return review;
+                
             }
-            return review;
+            return null;
         }
+
+
+
+
         //delete review 
-        public bool deleteReview(int id , IIdentity customer)
+        public bool DeleteReview(int id , IIdentity customer)
         {
             var customerId = HelperMethods.GetAuthnticatedUserId(customer);
             Review review = _db.Reviews.FirstOrDefault(a => a.ProductId == id && a.CustomerId == customerId && a.Isdeleted == false);
