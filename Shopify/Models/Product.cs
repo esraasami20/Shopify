@@ -82,7 +82,7 @@ namespace Shopify.Models
         [DefaultValue(false)]
         public bool IsdeletedBySeller { get; set; }
         [DefaultValue(false)]
-        public bool IsdeletedBySpoify { get; set; }
+        public bool Active { get; set; }
         public virtual Promotions Promotions { get; set; }
         public virtual List<Review> Reviews { get; set; }
         public virtual List<View> Views { get; set; }

@@ -187,7 +187,7 @@ namespace Shopify.Repository.Interfaces
 
         public List<Product>  GetTopSeales()
         {
-          return  _db.Products.Where(p=>p.IsdeletedBySeller==false && p.IsdeletedBySpoify ==true).OrderByDescending(p => p.QuantitySealed).Take(5).ToList();
+          return  _db.Products.Where(p=>p.IsdeletedBySeller==false && p.Active ==true).OrderByDescending(p => p.QuantitySealed).Take(5).ToList();
         }
 
 
@@ -206,7 +206,7 @@ namespace Shopify.Repository.Interfaces
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToListAsync();
-            var totalRecords = await _db.Products.Where(s => s.SubCategotyId == subCategoryId).CountAsync();
+            var totalRecords = await _db.Products.Where(s => s.SubCategotyId == subCategoryId && s.IsdeletedBySeller==false && s.Active==true).CountAsync();
            return PaginationHelper.CreatePagedReponse<Product>(pagedData, validFilter, totalRecords, _uriService, route);
         }
 
@@ -214,7 +214,7 @@ namespace Shopify.Repository.Interfaces
 
         public  List<Product> SearchProduct(string name)
         {
-          return _db.Products.Include(i=>i.ProductImages).Where(p => p.ProductName.Contains(name) && p.IsdeletedBySeller ==false && p.IsdeletedBySpoify == false).ToList();
+          return _db.Products.Include(i=>i.ProductImages).Where(p => p.ProductName.Contains(name) && p.IsdeletedBySeller ==false && p.Active == true).ToList();
         }
 
 
@@ -233,5 +233,9 @@ namespace Shopify.Repository.Interfaces
         //    return productDetails;
 
         //}
+
+
+        // get waiting product
+
     }
 }
