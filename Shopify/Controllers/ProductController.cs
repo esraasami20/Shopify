@@ -213,5 +213,16 @@ namespace Shopify.Controllers
             return Ok(topProducts);
         }
 
+
+
+        // get seller products in his inventory
+        [HttpGet("seller")]
+        public ActionResult GetSellerProducts()
+        {
+            List<Inventory> data = _productRepo.GetSellerProducts(User.Identity);
+            return Ok(data);
+        }
+
+
     }
 }

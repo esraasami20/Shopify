@@ -148,6 +148,14 @@ namespace Shopify.Repository.Interfaces
            
         }
 
+        internal List<Inventory> GetSellerProducts(IIdentity seller)
+        {
+            var sellerId = HelperMethods.GetAuthnticatedUserId(seller);
+            List<Inventory> Inventories = _db.Inventories.Include(ip => ip.InventoryProducts).ThenInclude(p=>p.Product).Where(i => i.sellerId == sellerId && i.Isdeleted == false).ToList();
+            return Inventories;
+
+        }
+
         public async Task<Response> EditProductImagesAsync(int id,IFormFile [] files, IIdentity seller)
         {
             var sellerId = HelperMethods.GetAuthnticatedUserId(seller);
