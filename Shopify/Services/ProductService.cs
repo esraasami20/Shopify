@@ -68,7 +68,7 @@ namespace Shopify.Repository.Interfaces
 
            public Product GetProductById(int id)
            {
-             return _db.Products.Include(rr=>rr.Reviews).Include(r=>r.ProductDetails).Include(i=>i.ProductImages).FirstOrDefault(p=>p.ProductId == id);
+             return _db.Products.Include(rr=>rr.Reviews).Include(r=>r.ProductDetails).Include(i=>i.ProductImages).Include(b=>b.Brand).FirstOrDefault(p=>p.ProductId == id && p.IsdeletedBySeller==false && p.Active==true);
            }
 
 
