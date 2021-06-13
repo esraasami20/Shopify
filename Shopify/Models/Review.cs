@@ -14,7 +14,7 @@ namespace Shopify.Models
         public virtual Customer Customer { get; set; }
 
         [Range(minimum:0,maximum:5)]
-        public float? review { get; set; }
+        public double? review { get; set; }
         public string comment { get; set; }
         public int ProductId { get; set; }
         [DefaultValue(false)]

@@ -40,6 +40,8 @@ namespace Shopify.Models
         [Required]
         [StringLength(maximumLength: 20, MinimumLength = 3)]
         public string Manufacture { get; set; }
+
+        public double Rate { get; set; }
         /// <summary>   end update one   /// </summary>
 
 

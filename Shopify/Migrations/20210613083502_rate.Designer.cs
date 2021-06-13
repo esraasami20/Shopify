@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shopify.Models;
 
 namespace Shopify.Migrations
 {
     [DbContext(typeof(ShopifyContext))]
-    partial class ShopifyContextModelSnapshot : ModelSnapshot
+    [Migration("20210613083502_rate")]
+    partial class rate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -717,8 +719,8 @@ namespace Shopify.Migrations
                     b.Property<string>("comment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("review")
-                        .HasColumnType("float");
+                    b.Property<float?>("review")
+                        .HasColumnType("real");
 
                     b.HasKey("CustomerId", "ProductId");
 

@@ -89,11 +89,18 @@ namespace Shopify.Controllers
             {
                 review.ProductId = ProductId;
                 var result = _reviewService.AddNewReview(User.Identity, review);
-                if (result != null)
+                if (result.Status=="Success")
                 {
-                    return Ok(result);
+                    return Ok(result.data);
+                }else if (result.Status == "Error")
+                {
+                    return new StatusCodeResult(StatusCodes.Status500InternalServerError);
                 }
-                return NotFound();
+                else
+                {
+                  return  NotFound();
+                }
+               
             }
             return BadRequest(ModelState);
         }
