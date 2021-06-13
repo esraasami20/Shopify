@@ -148,11 +148,14 @@ namespace Shopify.Repository.Interfaces
            
         }
 
-        internal List<Inventory> GetSellerProducts(IIdentity seller)
+        internal List<List<Product>> GetSellerProducts(IIdentity seller)
         {
             var sellerId = HelperMethods.GetAuthnticatedUserId(seller);
-            List<Inventory> Inventories = _db.Inventories.Include(ip => ip.InventoryProducts).ThenInclude(p=>p.Product).Where(i => i.sellerId == sellerId && i.Isdeleted == false).ToList();
-            return Inventories;
+            List<Inventory> inventories = _db.Inventories.Include(ip => ip.InventoryProducts).ThenInclude(p=>p.Product).Where(i => i.sellerId == sellerId && i.Isdeleted == false).ToList();
+
+            List<List<Product>> products = inventories.Select(f => f.InventoryProducts.Where(f=>f.Isdeleted==false).Select(f => f.Product).Where(r=>r.IsdeletedBySeller==false).ToList()).ToList();
+           
+            return products;
 
         }
 

@@ -219,7 +219,7 @@ namespace Shopify.Controllers
         [HttpGet("seller")]
         public ActionResult GetSellerProducts()
         {
-            List<Inventory> data = _productRepo.GetSellerProducts(User.Identity);
+            List<List<Product>> data = _productRepo.GetSellerProducts(User.Identity);
             return Ok(data);
         }
 
