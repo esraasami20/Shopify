@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
@@ -68,7 +69,7 @@ namespace Shopify.Repository.Interfaces
 
            public Product GetProductById(int id)
            {
-             return _db.Products.Include(rr=>rr.Reviews).Include(r=>r.ProductDetails).Include(i=>i.ProductImages).Include(b=>b.Brand).FirstOrDefault(p=>p.ProductId == id && p.IsdeletedBySeller==false && p.Active==true);
+             return _db.Products.Include(rr=>rr.Reviews).Include(i=>i.ProductImages).Include(b=>b.Brand).FirstOrDefault(p=>p.ProductId == id && p.IsdeletedBySeller==false && p.Active==true);
            }
 
 
@@ -104,6 +105,36 @@ namespace Shopify.Repository.Interfaces
             return new Response { Status = "Error" };
 
         }
+
+
+        // get product details by id  for seller 
+        public Response GetProductByIdForSeller(int id, IIdentity seller)
+        {
+
+            string sellerId = HelperMethods.GetAuthnticatedUserId(seller);
+            List<Inventory> inventories = _db.Inventories.Include(r=>r.InventoryProducts).Where(s => s.sellerId == sellerId && s.Isdeleted==false).ToList();
+           
+            Product product = null;
+            foreach (var invent in inventories)
+            {
+                if (product == null)
+                {
+                   var InventoryProduct = invent.InventoryProducts.FirstOrDefault(t => t.ProductId == id && t.Isdeleted == false);
+                    if (InventoryProduct != null)
+                    {
+                        product = _db.Products.SingleOrDefault(p => p.ProductId == id && p.IsdeletedBySeller==false);
+                    }
+                }
+            }
+            if (product == null)
+            {
+                return new Response{Status="Error" , Message="NotFound" };
+            }
+            return new Response { Status = "Success" ,data=product};
+        }
+
+
+
 
         public bool DeleteProduct(int id)
         {
@@ -152,7 +183,7 @@ namespace Shopify.Repository.Interfaces
         {
             var sellerId = HelperMethods.GetAuthnticatedUserId(seller);
             List<Inventory> inventories = _db.Inventories.Include(ip => ip.InventoryProducts).ThenInclude(p=>p.Product).Where(i => i.sellerId == sellerId && i.Isdeleted == false).ToList();
-
+           
             List<List<Product>> products = inventories.Select(f => f.InventoryProducts.Where(f=>f.Isdeleted==false).Select(f => f.Product).Where(r=>r.IsdeletedBySeller==false).ToList()).ToList();
            
             return products;

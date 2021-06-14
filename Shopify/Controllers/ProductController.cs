@@ -117,6 +117,16 @@ namespace Shopify.Controllers
 
 
 
+        // get product by id
+        [Authorize(Roles ="Seller")]
+        [HttpGet("Details/seller/{id}")]
+        public ActionResult<Product> GetProductByIdForSeller(int id)
+        {
+            var result = _productRepo.GetProductByIdForSeller(id , User.Identity);
+            if (result.Status == "Success")
+                return Ok(result);
+            return NotFound();
+        }
 
 
 

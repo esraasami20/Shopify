@@ -62,6 +62,7 @@ namespace Shopify
             services.AddDbContext<ShopifyContext>(op =>
             {
                 op.UseSqlServer(Configuration.GetConnectionString("myconnection"));
+               // op.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("myconnection"));
 
             });
 
