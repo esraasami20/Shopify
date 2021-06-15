@@ -69,7 +69,7 @@ namespace Shopify.Repository.Interfaces
 
            public Product GetProductById(int id)
            {
-             return _db.Products.Include(rr=>rr.Reviews).Include(i=>i.ProductImages).Include(b=>b.Brand).FirstOrDefault(p=>p.ProductId == id && p.IsdeletedBySeller==false && p.Active==true);
+             return _db.Products.Include(rr=>rr.Reviews).ThenInclude(r=>r.Customer).ThenInclude(f=>f.ApplicationUser).Include(i=>i.ProductImages).Include(b=>b.Brand).FirstOrDefault(p=>p.ProductId == id && p.IsdeletedBySeller==false && p.Active==true);
            }
 
 
@@ -182,7 +182,7 @@ namespace Shopify.Repository.Interfaces
         internal List<List<Product>> GetSellerProducts(IIdentity seller)
         {
             var sellerId = HelperMethods.GetAuthnticatedUserId(seller);
-            List<Inventory> inventories = _db.Inventories.Include(ip => ip.InventoryProducts).ThenInclude(p=>p.Product).Where(i => i.sellerId == sellerId && i.Isdeleted == false).ToList();
+            List<Inventory> inventories = _db.Inventories.Include(ip => ip.InventoryProducts).ThenInclude(r=>r.Product).ThenInclude(p=>p.ProductImages).Where(i => i.sellerId == sellerId && i.Isdeleted == false).ToList();
            
             List<List<Product>> products = inventories.Select(f => f.InventoryProducts.Where(f=>f.Isdeleted==false).Select(f => f.Product).Where(r=>r.IsdeletedBySeller==false).ToList()).ToList();
            
