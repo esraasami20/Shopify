@@ -37,17 +37,24 @@ namespace Shopify.Controllers
         {
             return _customerRepo.GetAllCustomers();
         }
+
+
+
         //get customer by id
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomerById(string id)
+        [HttpGet]
+        public async Task<ActionResult<Customer>> GetCustomerById()
         {
-            var customer = await _shopifyContext.Customers.Include("ApplicationUser").FirstOrDefaultAsync(s => s.CustomerId == id);
+            var CustomerId = HelperMethods.GetAuthnticatedUserId(User.Identity);
+            var customer = await _shopifyContext.Customers.Include("ApplicationUser").FirstOrDefaultAsync(s => s.CustomerId == CustomerId);
             if (customer == null)
             {
                 return NotFound();
             }
-            return customer;
+            return Ok(customer);
         }
+
+
+
         //edit customer
         [HttpPut("{id}")]
         public async Task<ActionResult<ApplicationUser>> EditCustomerAsync(string id, [FromBody] ApplicationUser user)
