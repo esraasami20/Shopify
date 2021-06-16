@@ -122,7 +122,7 @@ namespace Shopify.Repository.Interfaces
                    var InventoryProduct = invent.InventoryProducts.FirstOrDefault(t => t.ProductId == id && t.Isdeleted == false);
                     if (InventoryProduct != null)
                     {
-                        product = _db.Products.SingleOrDefault(p => p.ProductId == id && p.IsdeletedBySeller==false);
+                        product = _db.Products.Include(r=>r.ProductImages).SingleOrDefault(p => p.ProductId == id && p.IsdeletedBySeller==false);
                     }
                 }
             }
@@ -229,7 +229,7 @@ namespace Shopify.Repository.Interfaces
 
         public List<Product>  GetTopSeales()
         {
-          return  _db.Products.Where(p=>p.IsdeletedBySeller==false && p.Active ==true).OrderByDescending(p => p.QuantitySealed).Take(5).ToList();
+          return  _db.Products.Include(r=>r.ProductImages).Where(p=>p.IsdeletedBySeller==false && p.Active ==true).OrderByDescending(p => p.QuantitySealed).Take(5).ToList();
         }
 
 
