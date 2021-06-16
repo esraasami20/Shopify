@@ -60,8 +60,8 @@ namespace Shopify.Controllers
 
 
         //edit customer
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ApplicationUser>> EditCustomerAsync(string id, [FromBody] UserData userData)
+        [HttpPut]
+        public async Task<ActionResult<ApplicationUser>> EditCustomerAsync([FromBody] UserData userData)
         {
             if (!ModelState.IsValid)
             {
