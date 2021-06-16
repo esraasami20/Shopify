@@ -80,23 +80,23 @@ namespace Shopify.Controllers
 
 
         //edit customer
-        [HttpPut("/address")]
-        public ActionResult EditCustomerAsync([FromBody]  string address)
+        [HttpPut("change-address")]
+        public ActionResult EditCustomerAddress([FromBody]  EditAddress address)
         {
-            if (address.Length<1)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
             else
             {
-                _customerRepo.EditCustomerAddress(address, User.Identity);
+                _customerRepo.EditCustomerAddress(address.Address, User.Identity);
                     return NoContent();
             }
         }
 
 
         //edit customer
-        [HttpPut("/password")]
+        [HttpPut("password")]
         public async Task<ActionResult> EditCustomerPasswordAsync([FromBody] ChangePasswordViewModel changePassword)
         {
             if (!ModelState.IsValid)
