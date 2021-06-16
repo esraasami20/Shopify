@@ -80,19 +80,22 @@ namespace Shopify.Repository
             {
                 string userId = HelperMethods.GetAuthnticatedUserId(AuthUser);
                 var ProductView = _db.Views.FirstOrDefault(v => v.CustomerId == userId && v.ProductId == productId);
-                if (ProductView.IsFav)
+                if (ProductView != null)
                 {
-                    return new Response { Status = "Error", Message = "Product Is Already In Favourite" };
-                }
+                    if (ProductView.IsFav)
+                    {
+                        return new Response { Status = "Error", Message = "Product Is Already In Favourite" };
+                    }
 
-                ProductView.IsFav = true;
-                _db.SaveChanges();
-                return new Response { Status = "Success", Message = "Product Add In Favourite" };
+                    ProductView.IsFav = true;
+                    _db.SaveChanges();
+                    return new Response { Status = "Success", Message = "Product Add In Favourite" };
+
+                }
+                return new Response { Status = "Error", Message = "Product Not Found InFav" };
 
             }
             return new Response { Status = "Error", Message = "Product Not Found" };
-
-
         }
 
 
