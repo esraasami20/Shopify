@@ -13,6 +13,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Principal;
 using Shopify.Helper;
+using Shopify.ViewModels;
 
 namespace Shopify.Controllers
 {
@@ -90,13 +91,27 @@ namespace Shopify.Controllers
             {
                 _customerRepo.EditCustomerAddress(address, User.Identity);
                     return NoContent();
-               
             }
-
         }
 
 
+        //edit customer
+        [HttpPut("/password")]
+        public async Task<ActionResult> EditCustomerPasswordAsync([FromBody] ChangePasswordViewModel changePassword)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            else
+            {
+              bool result  =  await  _customerRepo.EditCustomerPasswordAsync(changePassword, User.Identity);
+                if (result)
+                  return NoContent();
+                return  new StatusCodeResult(StatusCodes.Status500InternalServerError);
 
+            }
+        }
 
 
 

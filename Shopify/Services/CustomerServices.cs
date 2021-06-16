@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopify.Helper;
 using Shopify.Models;
+using Shopify.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +15,12 @@ namespace Shopify.Repository
     public class CustomerServices
     {
         ShopifyContext _db;
-        public CustomerServices(ShopifyContext db)
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public CustomerServices(ShopifyContext db, UserManager<ApplicationUser> userManager)
         {
             _db = db ;
+            _userManager = userManager;
         }
 
         public void AddCustomerId(string id)
@@ -70,6 +75,27 @@ namespace Shopify.Repository
 
 
 
+        // edit customer address 
 
+
+        public Customer EditCustomerPassword(string Address, IIdentity user)
+        {
+            Customer customer = _db.Customers.Include(r => r.ApplicationUser).FirstOrDefault(s => s.CustomerId == HelperMethods.GetAuthnticatedUserId(user));
+            customer.ApplicationUser.Address = Address;
+            _db.SaveChangesAsync();
+            return customer;
+        }
+
+        internal async Task<bool> EditCustomerPasswordAsync(ChangePasswordViewModel changePassword, IIdentity customer)
+        {
+           var user = await  _userManager.FindByIdAsync(HelperMethods.GetAuthnticatedUserId(customer));
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetPassResult = await _userManager.ResetPasswordAsync(user,token, changePassword.NewPassword);
+            if (resetPassResult.Succeeded)
+                return true;
+            return false;
+            
+
+        }
     }
 }
