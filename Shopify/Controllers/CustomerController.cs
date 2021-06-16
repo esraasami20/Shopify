@@ -32,7 +32,7 @@ namespace Shopify.Controllers
         }
 
         //get sellers data
-        [HttpGet]
+        [HttpGet("All")]
         public ActionResult<List<ApplicationUser>> GetAll()
         {
             return _customerRepo.GetAllCustomers();
