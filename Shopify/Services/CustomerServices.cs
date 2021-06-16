@@ -57,9 +57,18 @@ namespace Shopify.Repository
         }
 
 
+        // edit customer address 
 
 
-        
+        public  Customer EditCustomerAddress(string Address , IIdentity user)
+        {
+            Customer customer = _db.Customers.Include(r => r.ApplicationUser).FirstOrDefault(s => s.CustomerId == HelperMethods.GetAuthnticatedUserId(user));
+            customer.ApplicationUser.Address = Address;
+             _db.SaveChangesAsync();
+            return customer;
+        }
+
+
 
 
     }

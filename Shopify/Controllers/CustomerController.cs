@@ -18,6 +18,7 @@ namespace Shopify.Controllers
 {
    
     [Route("api/[controller]")]
+    [Authorize(Roles ="Customer")]
     [ApiController]
     public class CustomerController : ControllerBase
     {
@@ -43,7 +44,7 @@ namespace Shopify.Controllers
 
         //get customer by id
         [HttpGet]
-        [Authorize(Roles = "Customer")]
+      
         public async Task<ActionResult<Customer>> GetCustomerById()
         {
             var CustomerId = HelperMethods.GetAuthnticatedUserId(User.Identity);
@@ -75,6 +76,33 @@ namespace Shopify.Controllers
             }
 
         }
+
+
+        //edit customer
+        [HttpPut("/address")]
+        public ActionResult EditCustomerAsync([FromBody]  string address)
+        {
+            if (address.Length<1)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                _customerRepo.EditCustomerAddress(address, User.Identity);
+                    return NoContent();
+               
+            }
+
+        }
+
+
+
+
+
+
+
+
+
         // delete customer
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomer(string id)
