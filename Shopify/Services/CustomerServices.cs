@@ -45,18 +45,16 @@ namespace Shopify.Repository
 
         }
         //edit Customer
-        public async Task<ApplicationUser> editCustomer(string id, [FromBody] ApplicationUser user)
+        public async Task<ApplicationUser> editCustomer(UserData userData, IIdentity user)
         {
-            var customer =  _db.Customers.FirstOrDefault(s => s.CustomerId == id);
+            var customer =  _db.Customers.FirstOrDefault(s => s.CustomerId == HelperMethods.GetAuthnticatedUserId(user));
 
             var userCustomer = _db.Users.FirstOrDefault(s => s.Id == customer.CustomerId);
-            userCustomer.Fname = user.Fname;
-            userCustomer.Lname = user.Lname;
-            userCustomer.Gender = user.Gender;
-            userCustomer.Email = user.Email;
-            userCustomer.UserName = user.UserName;
-            userCustomer.Address = user.Address;
-            userCustomer.Age = user.Age;
+            userCustomer.Fname = userData.Fname;
+            userCustomer.Lname = userData.Lname;
+            userCustomer.Email = userData.Email;
+          
+           
             await _db.SaveChangesAsync();
             return userCustomer;
         }
@@ -86,7 +84,7 @@ namespace Shopify.Repository
             return customer;
         }
 
-        internal async Task<bool> EditCustomerPasswordAsync(ChangePasswordViewModel changePassword, IIdentity customer)
+        public async Task<bool> EditCustomerPasswordAsync(ChangePasswordViewModel changePassword, IIdentity customer)
         {
            var user = await  _userManager.FindByIdAsync(HelperMethods.GetAuthnticatedUserId(customer));
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);

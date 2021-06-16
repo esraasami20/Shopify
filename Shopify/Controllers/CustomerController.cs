@@ -61,7 +61,7 @@ namespace Shopify.Controllers
 
         //edit customer
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApplicationUser>> EditCustomerAsync(string id, [FromBody] ApplicationUser user)
+        public async Task<ActionResult<ApplicationUser>> EditCustomerAsync(string id, [FromBody] UserData userData)
         {
             if (!ModelState.IsValid)
             {
@@ -69,8 +69,8 @@ namespace Shopify.Controllers
             }
             else
             {
-                user.Id = id;
-                var result = await _customerRepo.editCustomer(id, user);
+                
+                var result = await _customerRepo.editCustomer(userData, User.Identity);
                 if (result != null)
                     return NoContent();
                 return NotFound();
