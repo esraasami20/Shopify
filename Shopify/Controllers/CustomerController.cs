@@ -16,6 +16,7 @@ using Shopify.Helper;
 
 namespace Shopify.Controllers
 {
+   
     [Route("api/[controller]")]
     [ApiController]
     public class CustomerController : ControllerBase
@@ -42,6 +43,7 @@ namespace Shopify.Controllers
 
         //get customer by id
         [HttpGet]
+        [Authorize(Roles = "Customer")]
         public async Task<ActionResult<Customer>> GetCustomerById()
         {
             var CustomerId = HelperMethods.GetAuthnticatedUserId(User.Identity);
