@@ -234,7 +234,8 @@ namespace Shopify.Repository.Interfaces
 
         public List<Product>  GetTopSeales()
         {
-          return  _db.Products.Include(r=>r.ProductImages).Where(p=>p.IsdeletedBySeller==false && p.Active ==true).OrderByDescending(p => p.QuantitySealed).Take(5).ToList();
+            return  _db.Products.Include(r=>r.ProductImages).Where(p=>p.IsdeletedBySeller==false && p.Active ==true).OrderByDescending(p => p.QuantitySealed).Take(5).ToList();
+         
         }
 
 

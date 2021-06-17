@@ -15,7 +15,7 @@ namespace Shopify.Helper
             var fileExtension = Path.GetExtension(Path.GetFileName(file.FileName));
            
             var newFileName = String.Concat(Convert.ToString(categoryId), fileExtension);
-            string filePath = Path.Combine("http://localhost:23873/Files/Images/" + path, newFileName);
+            string filePath = Path.Combine("Files/Images/" + path, newFileName);
 
             using (Stream fileStream = new FileStream(filePath, FileMode.Create))
             {
