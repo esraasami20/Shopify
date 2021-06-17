@@ -39,9 +39,14 @@ namespace Shopify.Repository.Interfaces
               var result =  _db.Inventories.FirstOrDefault(i => i.InventoryId == inventoryId && i.sellerId == sellerId);
                 if (result != null)
                 {
-                   _db.Products.Add(product);
-                   _db.SaveChanges();
+                try
+                {
+                    _db.Products.Add(product);
+                    _db.SaveChanges();
+                }catch(Exception e)
+                {
 
+                }
              
 
 

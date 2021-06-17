@@ -35,7 +35,7 @@ namespace Shopify.Helper
                 var fileExtension = Path.GetExtension(Path.GetFileName(files[i].FileName));
 
                 var newFileName = String.Concat(Convert.ToString(NameByid)+"."+(i+1), fileExtension);
-                filePaths.Add(Path.Combine("http://localhost:23873/Files/Images/" + path, newFileName));
+                filePaths.Add(Path.Combine("Files/Images/" + path, newFileName));
 
                 using (Stream fileStream = new FileStream(filePaths[i], FileMode.Create))
                 {
@@ -63,7 +63,7 @@ namespace Shopify.Helper
                 var fileExtension = Path.GetExtension(Path.GetFileName(files[i].FileName));
 
                 var newFileName = String.Concat(Convert.ToString(NameByid) + "." + (i + 1), fileExtension);
-                filePaths.Add(Path.Combine("http://localhost:23873/Files/sellers/" + pathes[i],newFileName));
+                filePaths.Add(Path.Combine("Files/sellers/" + pathes[i],newFileName));
 
                 using (Stream fileStream = new FileStream(filePaths[i], FileMode.Create))
                 {

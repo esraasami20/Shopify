@@ -225,7 +225,7 @@ namespace Shopify.Controllers
 
 
 
-        // get seller products in his inventory
+        // get seller products 
         [HttpGet("seller")]
         public ActionResult GetSellerProducts()
         {
